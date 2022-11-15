@@ -95,14 +95,99 @@ public class Syntactic {
 		return recur;
 	}
 
+
+	private int Block(){
+		int recur = 0;   //Return value used later
+		if (anyErrors) { // Error check for fast exit, error status -1
+			return -1;
+		}
+
+		trace("Block", true);
+
+
+		while (token.code == lex.codeFor("VAR__")) {
+			token = lex.GetNextToken();
+			recur = VariableDecSec();
+		}
+
+		recur = BlockBody();
+
+		trace("Block", false);
+		// Final result of assigning to "recur" in the body is returned
+		return recur;
+
+	}
+
+	private int VariableDecSec(){
+		int recur = 0;   //Return value used later
+		if (anyErrors) { // Error check for fast exit, error status -1
+			return -1;
+		}
+
+		trace("VariableDecSec", true);
+
+
+		if (token.code == lex.codeFor("VAR__")) {
+			token = lex.GetNextToken();
+		}
+
+		recur = VariableDeclaration();
+
+
+		trace("VariableDecSec", false);
+		// Final result of assigning to "recur" in the body is returned
+		return recur;
+
+	}
+
+	private int VariableDeclaration(){
+		int recur = 0;   //Return value used later
+		if (anyErrors) { // Error check for fast exit, error status -1
+			return -1;
+		}
+
+		trace("VariableDeclaration", true);
+
+
+		while (token.code == lex.codeFor("IDENT")) {
+			token = lex.GetNextToken();
+
+			recur = Identifier();
+
+			while  (token.code == lex.codeFor("COMMA")) {
+				token = lex.GetNextToken();
+				recur = Identifier();
+			}
+
+			if (token.code == lex.codeFor("COLON")) {
+				token = lex.GetNextToken();
+			}else {
+				//TODO error checking, should except expecting colon here
+			}
+
+			recur = SimpleType();
+
+			if (token.code == lex.codeFor("SEMIC")) {
+				token = lex.GetNextToken();
+			}else {
+				//TODO error checking, should except expecting semicolon here
+			}
+		}
+
+		trace("VariableDeclaration", false);
+		// Final result of assigning to "recur" in the body is returned
+		return recur;
+
+	}
+
 	//Non Terminal BLOCK is fully implemented here.
 	//<block> -> $BEGIN <statement>  {$SEMICOLON  <statement>}* $END
-	private int Block() {
+	private int BlockBody() {
 		int recur = 0;
 		if (anyErrors) {
 			return -1;
 		}
-		trace("Block", true);
+		trace("Block-body", true);
 
 		if (token.code == lex.codeFor("BEGIN")) {
 			token = lex.GetNextToken();
@@ -121,7 +206,7 @@ public class Syntactic {
 			error(lex.reserveFor("BEGIN"), token.lexeme);
 		}
 
-		trace("Block", false);
+		trace("Block-body", false);
 		return recur;
 	}
 
@@ -351,6 +436,51 @@ public class Syntactic {
 		// Final result of assigning to "recur" in the body is returned
 		return recur;
 	}  
+
+	private int Identifier(){
+		int recur = 0;   //Return value used later
+		if (anyErrors) { // Error check for fast exit, error status -1
+			return -1;
+		}
+
+		trace("Identifier", true);
+
+		if (token.code == lex.codeFor("IDENT")) {
+			token = lex.GetNextToken();
+		}
+
+		trace("Identifier", false);
+		// Final result of assigning to "recur" in the body is returned
+		return recur;
+
+	}
+
+	private int SimpleType(){
+		int recur = 0;   //Return value used later
+		if (anyErrors) { // Error check for fast exit, error status -1
+			return -1;
+		}
+
+		trace("SimpleType", true);
+
+
+		if (token.code == lex.codeFor("INTGR")) {
+			token = lex.GetNextToken();
+		}
+		if (token.code == lex.codeFor("FLOAT")) {
+			token = lex.GetNextToken();
+		}
+		if (token.code == lex.codeFor("SRTNG")) {
+			token = lex.GetNextToken();
+		}
+
+		//TODO bounding and case checking, must be one of these three
+
+		trace("SimpleType", false);
+		// Final result of assigning to "recur" in the body is returned
+		return recur;
+
+	}
 
 	//Multiplication operation terminal
 	//<mulop> -> $MULTIPLY | $DIVIDE
