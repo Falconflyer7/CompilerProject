@@ -1,0 +1,6 @@
+Index Name      Use Typ Value
+  0  |  n      |v  |I  |10
+  1  |  i      |v  |I  |11
+  2  |product  |v  |I  |3628800
+  3  |  1      |c  |I  |1
+  4  |$temp    |v  |I  |1
