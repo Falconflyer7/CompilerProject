@@ -231,6 +231,41 @@ public class Syntactic {
 		trace("handleAssignment", false);
 		return recur;
 	}
+	
+	private int handleIf(){
+        int recur = 0;   //Return value used later
+        if (anyErrors) { // Error check for fast exit, error status -1
+            return -1;
+        }
+
+        trace("handleIf", true);
+
+        token = lex.GetNextToken();
+
+        recur = RelExpression();
+
+        if (token.code == lex.codeFor("THEN_")) {
+			token = lex.GetNextToken();
+		} else {
+			error("THEN_", token.lexeme);
+		}
+        
+        recur = Statement();
+        
+        if (token.code == lex.codeFor("ELSE_")) {
+			token = lex.GetNextToken();
+			recur = Statement();
+		} else {
+			error("ELSE_", token.lexeme);
+		}
+        
+
+		trace("handleIf", false);
+// Final result of assigning to "recur" in the body is returned
+        return recur;
+
+} 
+	
 	private int handleDoWhile(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -261,30 +296,32 @@ public class Syntactic {
 		// Final result of assigning to "recur" in the body is returned
 		return recur;
 	} 
-	
+
 	private int handleRepeat(){
-        int recur = 0;   //Return value used later
-        if (anyErrors) { // Error check for fast exit, error status -1
-            return -1;
-        }
+		int recur = 0;   //Return value used later
+		if (anyErrors) { // Error check for fast exit, error status -1
+			return -1;
+		}
 
-        trace("handleRepeat", true);
+		trace("handleRepeat", true);
 
-        recur = Statement();
-        
-        if (token.code == lex.codeFor("UNTIL")) {
-        	token = lex.GetNextToken();
-        } else {
-        	error("Until", token.lexeme);
-        }
-        
-        recur = RelExpression();
+		token = lex.GetNextToken();
+
+		recur = Statement();
+
+		if (token.code == lex.codeFor("UNTIL")) {
+			token = lex.GetNextToken();
+		} else {
+			error("Until", token.lexeme);
+		}
+
+		recur = RelExpression();
 
 		trace("handleRepeat", false);
-// Final result of assigning to "recur" in the body is returned
-        return recur;
+		// Final result of assigning to "recur" in the body is returned
+		return recur;
 
-} 
+	} 
 	//Simple Expression nonterminal
 	//<simple expression> -> [<sign>]  <term>  {<addop>  <term>}*
 	private int SimpleExpression() {
@@ -327,7 +364,7 @@ public class Syntactic {
 		if (token.code == lex.codeFor("IDENT")) {  //must be an ASSIGNMENT
 			recur = handleAssignment();
 		} else if (token.code == lex.codeFor("IF___")) {  //must be an IF
-
+			recur = handleIf();
 		} else if (token.code == lex.codeFor("DWHLE")){
 			recur = handleDoWhile();
 		} else if (token.code == lex.codeFor("RPEAT")){
