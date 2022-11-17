@@ -231,7 +231,60 @@ public class Syntactic {
 		trace("handleAssignment", false);
 		return recur;
 	}
+	private int handleDoWhile(){
+		int recur = 0;   //Return value used later
+		if (anyErrors) { // Error check for fast exit, error status -1
+			return -1;
+		}
 
+		trace("handleDoWhile", true);
+
+		//Call for token after dowhile
+		token = lex.GetNextToken();
+
+		recur = RelExpression();
+		recur = Statement();
+		//        if (token.code == lex.codeFor("ASSGN")) {
+		//			recur = SimpleExpression();
+		//		} else {
+		//			error(lex.reserveFor("ASSGN"), token.lexeme);
+		//		}
+		//        
+		//        if (token.code == lex.codeFor("ASSGN")) {
+		//			token = lex.GetNextToken();
+		//			recur = SimpleExpression();
+		//		} else {
+		//			error(lex.reserveFor("ASSGN"), token.lexeme);
+		//		}
+
+		trace("handleDoWhile", false);
+		// Final result of assigning to "recur" in the body is returned
+		return recur;
+	} 
+	
+	private int handleRepeat(){
+        int recur = 0;   //Return value used later
+        if (anyErrors) { // Error check for fast exit, error status -1
+            return -1;
+        }
+
+        trace("handleRepeat", true);
+
+        recur = Statement();
+        
+        if (token.code == lex.codeFor("UNTIL")) {
+        	token = lex.GetNextToken();
+        } else {
+        	error("Until", token.lexeme);
+        }
+        
+        recur = RelExpression();
+
+		trace("handleRepeat", false);
+// Final result of assigning to "recur" in the body is returned
+        return recur;
+
+} 
 	//Simple Expression nonterminal
 	//<simple expression> -> [<sign>]  <term>  {<addop>  <term>}*
 	private int SimpleExpression() {
@@ -273,16 +326,25 @@ public class Syntactic {
 
 		if (token.code == lex.codeFor("IDENT")) {  //must be an ASSIGNMENT
 			recur = handleAssignment();
+		} else if (token.code == lex.codeFor("IF___")) {  //must be an IF
+
+		} else if (token.code == lex.codeFor("DWHLE")){
+			recur = handleDoWhile();
+		} else if (token.code == lex.codeFor("RPEAT")){
+			recur = handleRepeat();
+		} else if (token.code == lex.codeFor("FOR__")){
+
+		} else if (token.code == lex.codeFor("WRTLN")){
+
+		} else if (token.code == lex.codeFor("RDLN_")){
+
 		} else {
-			if (token.code == lex.codeFor("IF___")) {  //must be an IF
-				// this would handle the rest of the IF statment IN PART B
-			} else 
-				// if/elses should look for the other possible statement starts...  
-				//  but not until PART B
-			{
-				error("Statement start", token.lexeme);
-			}
+			error("Statement start", token.lexeme);
 		}
+		//TODO Block body
+		//		else if (token.code == lex.codeFor("DWHLE")){
+		//
+		//		}
 
 		trace("Statement", false);
 		return recur;
@@ -391,6 +453,54 @@ public class Syntactic {
 		trace("Factor", false);
 		// Final result of assigning to "recur" in the body is returned
 		return recur;
+	} 
+
+	private int RelExpression(){
+		int recur = 0;   //Return value used later
+		if (anyErrors) { // Error check for fast exit, error status -1
+			return -1;
+		}
+
+		trace("RelExpression", true);
+
+		recur = SimpleExpression();
+		recur = RelOp();
+		recur = SimpleExpression();
+
+		trace("RelExpression", false);
+		// Final result of assigning to "recur" in the body is returned
+		return recur;
+
+	} 
+
+	private int RelOp(){
+		int recur = 0;   //Return value used later
+		if (anyErrors) { // Error check for fast exit, error status -1
+			return -1;
+		}
+
+		trace("RelOp", true);
+
+		if (token.code == lex.codeFor("EQUAL")){
+			token = lex.GetNextToken();
+		} else if (token.code == lex.codeFor("LSTHN")) {
+			token = lex.GetNextToken();
+		} else if (token.code == lex.codeFor("GRTHN")) {
+			token = lex.GetNextToken();
+		} else if (token.code == lex.codeFor("NTEQL")) {
+			token = lex.GetNextToken();
+		} else if (token.code == lex.codeFor("LSTEQ")) {
+			token = lex.GetNextToken();
+		} else if (token.code == lex.codeFor("GRTEQ")) {
+			token = lex.GetNextToken();
+		} else {
+			error("RelationalOperator", token.lexeme);
+		}
+
+		trace("RelOp", false);
+		// Final result of assigning to "recur" in the body is returned
+		return recur;
+
 	} 
 
 	//Unsigned Constant nonterminal
