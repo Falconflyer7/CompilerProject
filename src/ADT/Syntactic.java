@@ -231,41 +231,41 @@ public class Syntactic {
 		trace("handleAssignment", false);
 		return recur;
 	}
-	
+
 	private int handleIf(){
-        int recur = 0;   //Return value used later
-        if (anyErrors) { // Error check for fast exit, error status -1
-            return -1;
-        }
+		int recur = 0;   //Return value used later
+		if (anyErrors) { // Error check for fast exit, error status -1
+			return -1;
+		}
 
-        trace("handleIf", true);
+		trace("handleIf", true);
 
-        token = lex.GetNextToken();
+		token = lex.GetNextToken();
 
-        recur = RelExpression();
+		recur = RelExpression();
 
-        if (token.code == lex.codeFor("THEN_")) {
+		if (token.code == lex.codeFor("THEN_")) {
 			token = lex.GetNextToken();
 		} else {
 			error("THEN_", token.lexeme);
 		}
-        
-        recur = Statement();
-        
-        if (token.code == lex.codeFor("ELSE_")) {
+
+		recur = Statement();
+
+		if (token.code == lex.codeFor("ELSE_")) {
 			token = lex.GetNextToken();
 			recur = Statement();
 		} else {
 			error("ELSE_", token.lexeme);
 		}
-        
+
 
 		trace("handleIf", false);
-// Final result of assigning to "recur" in the body is returned
-        return recur;
+		// Final result of assigning to "recur" in the body is returned
+		return recur;
 
-} 
-	
+	} 
+
 	private int handleDoWhile(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -322,6 +322,118 @@ public class Syntactic {
 		return recur;
 
 	} 
+
+	private int handleFor(){
+		int recur = 0;   //Return value used later
+		if (anyErrors) { // Error check for fast exit, error status -1
+			return -1;
+		}
+
+		trace("handleFor", true);
+
+		token = lex.GetNextToken();
+
+		recur = Variable();
+
+		if (token.code == lex.codeFor("ASSGN")) {
+			token = lex.GetNextToken();
+		} else {
+			error("Assign", token.lexeme);
+		}
+
+		recur = SimpleExpression();
+
+		if (token.code == lex.codeFor("TO___")) {
+			token = lex.GetNextToken();
+		} else {
+			error("To", token.lexeme);
+		}
+
+		recur = SimpleExpression();
+
+		if (token.code == lex.codeFor("DO___")) {
+			token = lex.GetNextToken();
+		} else {
+			error("Do", token.lexeme);
+		}
+
+		recur = Statement();
+
+		trace("handleFor", false);
+		// Final result of assigning to "recur" in the body is returned
+		return recur;
+
+	} 
+
+	private int handleWriteline(){
+		int recur = 0;   //Return value used later
+		if (anyErrors) { // Error check for fast exit, error status -1
+			return -1;
+		}
+
+		trace("handleWriteline", true);
+
+		token = lex.GetNextToken();
+
+		if (token.code == lex.codeFor("LPRNT")) {
+			token = lex.GetNextToken();
+		} else {
+			error("(", token.lexeme);
+		}
+
+		if (token.code == lex.codeFor("IDENT")) {
+			recur = Identifier();
+		} else if (token.code == lex.codeFor("SCNST")){
+			recur = StringConstant();
+		} else if (token.code == lex.codeFor("ADD__") || token.code == lex.codeFor("SUBTR") || token.code == lex.codeFor("LPRNT") 
+				|| token.code == lex.codeFor("ICNST") || token.code == lex.codeFor("FCNST") || token.code == lex.codeFor("IDENT")) {
+			recur = SimpleExpression();
+		} else {
+			error("", token.lexeme);
+		}
+
+
+		if (token.code == lex.codeFor("RPRNT")) {
+			token = lex.GetNextToken();
+		} else {
+			error(")", token.lexeme);
+		}
+
+		trace("handleWriteline", false);
+		// Final result of assigning to "recur" in the body is returned
+		return recur;
+
+	} 
+	
+	private int handleReadline(){
+		int recur = 0;   //Return value used later
+		if (anyErrors) { // Error check for fast exit, error status -1
+			return -1;
+		}
+
+		trace("handleReadline", true);
+
+		token = lex.GetNextToken();
+
+		if (token.code == lex.codeFor("LPRNT")) {
+			token = lex.GetNextToken();
+		} else {
+			error("LPRNT", token.lexeme);
+		}
+
+		recur = Identifier();
+
+		if (token.code == lex.codeFor("RPRNT")) {
+			token = lex.GetNextToken();
+		} else {
+			error("RPRNT", token.lexeme);
+		}
+		trace("handleReadline", false);
+		// Final result of assigning to "recur" in the body is returned
+		return recur;
+
+	} 
+
 	//Simple Expression nonterminal
 	//<simple expression> -> [<sign>]  <term>  {<addop>  <term>}*
 	private int SimpleExpression() {
@@ -370,11 +482,11 @@ public class Syntactic {
 		} else if (token.code == lex.codeFor("RPEAT")){
 			recur = handleRepeat();
 		} else if (token.code == lex.codeFor("FOR__")){
-
+			recur = handleFor();
 		} else if (token.code == lex.codeFor("WRTLN")){
-
+			recur = handleWriteline();
 		} else if (token.code == lex.codeFor("RDLN_")){
-
+			recur = handleReadline();
 		} else {
 			error("Statement start", token.lexeme);
 		}
@@ -672,6 +784,26 @@ public class Syntactic {
 		// Final result of assigning to "recur" in the body is returned
 		return recur;
 	}  
+
+	private int StringConstant(){
+		int recur = 0;   //Return value used later
+		if (anyErrors) { // Error check for fast exit, error status -1
+			return -1;
+		}
+
+		trace("StringConstant", true);
+
+		if (token.code == lex.codeFor("SCNST")) {
+			token = lex.GetNextToken();
+		} else {
+			error("StringConstant", token.lexeme);
+		}
+
+		trace("StringConstant", false);
+		// Final result of assigning to "recur" in the body is returned
+		return recur;
+
+	} 
 
 	/**
 	 * *************************************************
