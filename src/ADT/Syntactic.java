@@ -96,6 +96,9 @@ public class Syntactic {
 	}
 
 
+	//Nonterminal Block
+	//	<block> -> {<variable-dec-sec>}*
+	//	<block-body>
 	private int Block(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -118,6 +121,8 @@ public class Syntactic {
 
 	}
 
+	//Nonterminal for variable declaration section of program
+	//<variable-dec-sec> -> $VAR <variable-declaration>
 	private int VariableDecSec(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -140,6 +145,8 @@ public class Syntactic {
 
 	}
 
+	//Nonterminal for all declaration of variables in program
+	//<variable-declaration> -> {<identifier> {$COMMA <identifier>}* $COLON <simple type> $SEMICOLON}+ 
 	private int VariableDeclaration(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -180,7 +187,7 @@ public class Syntactic {
 
 	}
 
-	//Non Terminal BLOCK is fully implemented here.
+	//Non Terminal block body is fully implemented here.
 	//<block> -> $BEGIN <statement>  {$SEMICOLON  <statement>}* $END
 	private int BlockBody() {
 		int recur = 0;
@@ -210,8 +217,10 @@ public class Syntactic {
 		return recur;
 	}
 
+
+	//TODO extend assignment for new cfg
 	//Not a NT, but used to shorten Statement code body for readability.   
-	//<variable> $COLON-EQUALS <simple expression>
+	// <variable> $ASSIGN (<simple expression> | <string literal>)
 	private int handleAssignment() {
 		int recur = 0;
 		if (anyErrors) {
@@ -232,6 +241,8 @@ public class Syntactic {
 		return recur;
 	}
 
+	//Not a NT, but used to shorten Statement code body for readability.
+	// $IF <relexpression> $THEN <statement>[$ELSE <statement>]
 	private int handleIf(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -266,6 +277,8 @@ public class Syntactic {
 
 	} 
 
+	//Not a NT, but used to shorten Statement code body for readability.
+	//$DOWHILE <relexpression> <statement>
 	private int handleDoWhile(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -297,6 +310,8 @@ public class Syntactic {
 		return recur;
 	} 
 
+	//Not a NT, but used to shorten Statement code body for readability.
+	//$REPEAT <statement> $UNTIL <relexpression>
 	private int handleRepeat(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -323,6 +338,8 @@ public class Syntactic {
 
 	} 
 
+	//Not a NT, but used to shorten Statement code body for readability.
+	//$FOR <variable> $ASSIGN <simple expression> $TO <simple expression> $DO <statement>
 	private int handleFor(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -365,6 +382,8 @@ public class Syntactic {
 
 	} 
 
+	//Not a NT, but used to shorten Statement code body for readability.
+	// $WRITELN $LPAR (<simple expression> | <identifier> |<stringconst> ) $RPAR
 	private int handleWriteline(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -404,7 +423,9 @@ public class Syntactic {
 		return recur;
 
 	} 
-	
+
+	//Not a NT, but used to shorten Statement code body for readability.
+	//$READLN $LPAR <identifier> $RPAR
 	private int handleReadline(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -462,9 +483,23 @@ public class Syntactic {
 		return recur;
 	}
 
-	// Eventually this will handle all possible statement starts in 
-	//    a nested if/else structure. Only ASSIGNMENT is implemented now.
-	//<statement>-> <variable>  $COLON-EQUALS  <simple expression>
+	//TODO Extend block body into statement
+	// Handles all possible statement starts in a nested if/else structure.
+	//<statement>-> { 
+	//	[
+	//	 <variable> $ASSIGN 
+	//	(<simple expression> | <string literal>) |
+	//	 <block-body> |
+	//	 $IF <relexpression> $THEN <statement>
+	//	[$ELSE <statement>] |
+	//	 $DOWHILE <relexpression> <statement> |
+	//	 $REPEAT <statement> $UNTIL <relexpression> |
+	//	 $FOR <variable> $ASSIGN <simple expression>
+	//	 $TO <simple expression> $DO <statement> |
+	//	 $WRITELN $LPAR (<simple expression> | <identifier> |
+	//	<stringconst> ) $RPAR
+	//	 $READLN $LPAR <identifier> $RPAR
+	//	]+
 	private int Statement() {
 		int recur = 0;
 		if (anyErrors) {
@@ -511,7 +546,7 @@ public class Syntactic {
 		trace("Variable", true);
 		if ((token.code == lex.codeFor("IDENT"))) {
 			// bookkeeping and move on
-			token = lex.GetNextToken();
+			recur = Identifier();
 		} else {
 			error("Variable", token.lexeme);
 		}
@@ -604,6 +639,8 @@ public class Syntactic {
 		return recur;
 	} 
 
+	//Relational expression nonterminal
+	//	<relexpression> -> <simple expression> <relop> <simple expression>
 	private int RelExpression(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -622,6 +659,8 @@ public class Syntactic {
 
 	} 
 
+	//relational operation terminal
+	//<relop> -> $EQ | $LSS | $GTR | $NEQ | $LEQ | $GEQ
 	private int RelOp(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -696,6 +735,8 @@ public class Syntactic {
 		return recur;
 	}  
 
+	//Identifier terminal
+	//<identifier> -> $IDENTIFIER
 	private int Identifier(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -714,6 +755,8 @@ public class Syntactic {
 
 	}
 
+	//Simple type terminal
+	//<simple type> -> $INTEGER | $FLOAT | $STRING
 	private int SimpleType(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -738,7 +781,6 @@ public class Syntactic {
 		trace("SimpleType", false);
 		// Final result of assigning to "recur" in the body is returned
 		return recur;
-
 	}
 
 	//Multiplication operation terminal
@@ -785,6 +827,8 @@ public class Syntactic {
 		return recur;
 	}  
 
+	//String constant terminal
+	//<stringconst> -> $STRINGTYPE
 	private int StringConstant(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
