@@ -266,9 +266,10 @@ public class Syntactic {
 		if (token.code == lex.codeFor("ELSE_")) {
 			token = lex.GetNextToken();
 			recur = Statement();
-		} else {
-			error("ELSE_", token.lexeme);
-		}
+		} 
+//		else {
+//			error("ELSE_", token.lexeme);
+//		}
 
 
 		trace("handleIf", false);
