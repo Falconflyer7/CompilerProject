@@ -21,6 +21,7 @@ public class SymbolTable {
 	private int maxSize;
 	private int index = 0;
 	private ArrayList<SymbolTableData> data;
+	private boolean declarationComplete = false;
 
 	/**
 	 * Class constructor
@@ -59,6 +60,10 @@ public class SymbolTable {
 		data.add(currentIndex, tableItem);
 
 		index++;
+		
+		if (declarationComplete) {
+			undeclaredError(name);
+		}
 		return currentIndex;
 
 	}
@@ -88,6 +93,10 @@ public class SymbolTable {
 		data.add(currentIndex, tableItem);
 
 		index++;
+		
+		if (declarationComplete) {
+			undeclaredError(name);
+		}
 		return currentIndex;
 
 
@@ -118,6 +127,9 @@ public class SymbolTable {
 		data.add(currentIndex, tableItem);
 
 		index++;
+		if (declarationComplete) {
+			undeclaredError(name);
+		}
 		return currentIndex;
 
 	}
@@ -346,6 +358,14 @@ public class SymbolTable {
 	}
 
 
+	public void DeclarationComplete() {
+		declarationComplete = true;
+	}
+	
+	private void undeclaredError(String name) {
+		System.out.println("Undeclared Identifier: " + name);
+	}
+	
 	/**
 	 * 
 	 * @author Mark Fish
@@ -443,4 +463,5 @@ public class SymbolTable {
 			return null;
 		}
 	}
+	
 }

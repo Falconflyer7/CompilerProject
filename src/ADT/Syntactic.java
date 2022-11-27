@@ -112,7 +112,10 @@ public class Syntactic {
 			token = lex.GetNextToken();
 			recur = VariableDecSec();
 		}
-
+		
+		//Variable declaration complete, will now complain when you use undeclared variables
+		symbolList.DeclarationComplete();
+		
 		recur = BlockBody();
 
 		trace("Block", false);
