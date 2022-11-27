@@ -199,17 +199,21 @@ public class Syntactic {
 		if (token.code == lex.codeFor("BEGIN")) {
 			token = lex.GetNextToken();
 			recur = Statement();
-			while ((token.code == lex.codeFor("SEMIC")) && (!lex.EOF()) && (!anyErrors)) {
+			while ((token.code == lex.codeFor("SEMIC")) && (!lex.EOF()) && (!anyErrors) && (token.code != lex.codeFor("END__"))) {
 				token = lex.GetNextToken();
 				recur = Statement();
 			}
-			if (token.code == lex.codeFor("END__")) {
-				token = lex.GetNextToken();
-			} else {
-				error(lex.reserveFor("END__"), token.lexeme);
-			}
+			//			if (token.code == lex.codeFor("END__")) {
+			//				token = lex.GetNextToken();
+			//			} else {
+			//				error(lex.reserveFor("END__"), token.lexeme);
+			//			}
 
-		} else {
+		} else if (token.code == lex.codeFor("END__")) {
+			token = lex.GetNextToken();
+			//		} else {
+			//			error(lex.reserveFor("END__"), token.lexeme);
+		}else {
 			error(lex.reserveFor("BEGIN"), token.lexeme);
 		}
 
@@ -267,9 +271,9 @@ public class Syntactic {
 			token = lex.GetNextToken();
 			recur = Statement();
 		} 
-//		else {
-//			error("ELSE_", token.lexeme);
-//		}
+		//		else {
+		//			error("ELSE_", token.lexeme);
+		//		}
 
 
 		trace("handleIf", false);
@@ -523,13 +527,12 @@ public class Syntactic {
 			recur = handleWriteline();
 		} else if (token.code == lex.codeFor("RDLN_")){
 			recur = handleReadline();
-		} else {
+		} else if (token.code == lex.codeFor("BEGIN") || token.code == lex.codeFor("END__")){
+			recur = BlockBody();
+		}
+		else {
 			error("Statement start", token.lexeme);
 		}
-		//TODO Block body
-		//		else if (token.code == lex.codeFor("DWHLE")){
-		//
-		//		}
 
 		trace("Statement", false);
 		return recur;
