@@ -23,7 +23,7 @@ for x := 1 to 10 do a := a + c;
 
 DOWHILE a > b c := c + 1;
 
-Repeat x := x+y until a > b;
+Repeat x :=  x + y until a > b;
 
 readln (newident);
 

@@ -112,10 +112,10 @@ public class Syntactic {
 			token = lex.GetNextToken();
 			recur = VariableDecSec();
 		}
-		
+
 		//Variable declaration complete, will now complain when you use undeclared variables
 		symbolList.DeclarationComplete();
-		
+
 		recur = BlockBody();
 
 		trace("Block", false);
@@ -264,7 +264,7 @@ public class Syntactic {
 
 		if (token.code == lex.codeFor("THEN_")) {
 			token = lex.GetNextToken();
-		} else {
+		} else if (!anyErrors){
 			error("THEN_", token.lexeme);
 		}
 
@@ -274,9 +274,9 @@ public class Syntactic {
 			token = lex.GetNextToken();
 			recur = Statement();
 		} 
-		//		else {
-		//			error("ELSE_", token.lexeme);
-		//		}
+		else if (!anyErrors){
+			error("ELSE_", token.lexeme);
+		}
 
 
 		trace("handleIf", false);
@@ -300,18 +300,6 @@ public class Syntactic {
 
 		recur = RelExpression();
 		recur = Statement();
-		//        if (token.code == lex.codeFor("ASSGN")) {
-		//			recur = SimpleExpression();
-		//		} else {
-		//			error(lex.reserveFor("ASSGN"), token.lexeme);
-		//		}
-		//        
-		//        if (token.code == lex.codeFor("ASSGN")) {
-		//			token = lex.GetNextToken();
-		//			recur = SimpleExpression();
-		//		} else {
-		//			error(lex.reserveFor("ASSGN"), token.lexeme);
-		//		}
 
 		trace("handleDoWhile", false);
 		// Final result of assigning to "recur" in the body is returned
@@ -334,7 +322,7 @@ public class Syntactic {
 
 		if (token.code == lex.codeFor("UNTIL")) {
 			token = lex.GetNextToken();
-		} else {
+		} else if (!anyErrors){
 			error("Until", token.lexeme);
 		}
 
@@ -362,7 +350,7 @@ public class Syntactic {
 
 		if (token.code == lex.codeFor("ASSGN")) {
 			token = lex.GetNextToken();
-		} else {
+		} else if (!anyErrors){
 			error("Assign", token.lexeme);
 		}
 
@@ -370,7 +358,7 @@ public class Syntactic {
 
 		if (token.code == lex.codeFor("TO___")) {
 			token = lex.GetNextToken();
-		} else {
+		} else if (!anyErrors){
 			error("To", token.lexeme);
 		}
 
@@ -378,7 +366,7 @@ public class Syntactic {
 
 		if (token.code == lex.codeFor("DO___")) {
 			token = lex.GetNextToken();
-		} else {
+		} else if (!anyErrors){
 			error("Do", token.lexeme);
 		}
 
@@ -415,14 +403,14 @@ public class Syntactic {
 		} else if (token.code == lex.codeFor("ADD__") || token.code == lex.codeFor("SUBTR") || token.code == lex.codeFor("LPRNT") 
 				|| token.code == lex.codeFor("ICNST") || token.code == lex.codeFor("FCNST") || token.code == lex.codeFor("IDENT")) {
 			recur = SimpleExpression();
-		} else {
+		} else if (!anyErrors){
 			error("", token.lexeme);
 		}
 
 
 		if (token.code == lex.codeFor("RPRNT")) {
 			token = lex.GetNextToken();
-		} else {
+		} else if (!anyErrors){
 			error(")", token.lexeme);
 		}
 
@@ -446,7 +434,7 @@ public class Syntactic {
 
 		if (token.code == lex.codeFor("LPRNT")) {
 			token = lex.GetNextToken();
-		} else {
+		} else if (!anyErrors){
 			error("LPRNT", token.lexeme);
 		}
 
@@ -454,7 +442,7 @@ public class Syntactic {
 
 		if (token.code == lex.codeFor("RPRNT")) {
 			token = lex.GetNextToken();
-		} else {
+		} else if (!anyErrors){
 			error("RPRNT", token.lexeme);
 		}
 		trace("handleReadline", false);
@@ -532,9 +520,18 @@ public class Syntactic {
 			recur = handleReadline();
 		} else if (token.code == lex.codeFor("BEGIN") || token.code == lex.codeFor("END__")){
 			recur = BlockBody();
-		}
-		else {
+		} else {
 			error("Statement start", token.lexeme);
+		}
+
+		if (anyErrors) {
+			anyErrors = false;
+			while (token.code != lex.codeFor("SEMIC") && token.code != lex.codeFor("END__")) {
+				token = lex.GetNextToken();
+				//				if (token.code == lex.codeFor()) {
+				//					
+				//				}
+			}
 		}
 
 		trace("Statement", false);
