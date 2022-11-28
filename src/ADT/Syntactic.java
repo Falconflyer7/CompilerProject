@@ -34,7 +34,7 @@ public class Syntactic {
 	}
 
 	//The interface to the syntax analyzer, initiates parsing
-	// Uses variable RECUR to get return values throughout the non-terminal methods    
+	//Uses variable RECUR to get return values throughout the non-terminal methods    
 	public void parse() {
 		int recur = 0;
 		// prime the pump to get the first token to process
@@ -51,9 +51,9 @@ public class Syntactic {
 			return -1;
 		}
 
-		// This non-term is used to uniquely mark the program identifier
+		//This non-term is used to uniquely mark the program identifier
 		if (token.code == lex.codeFor("IDENT")) {
-			// Because this is the progIdentifier, it will get a 'P' type to prevent re-use as a var
+			//Because this is the progIdentifier, it will get a 'P' type to prevent re-use as a var
 			symbolList.UpdateSymbol(symbolList.LookupSymbol(token.lexeme), 'P', 0);
 			//move on
 			token = lex.GetNextToken();
@@ -97,8 +97,7 @@ public class Syntactic {
 
 
 	//Nonterminal Block
-	//	<block> -> {<variable-dec-sec>}*
-	//	<block-body>
+	//<block> -> {<variable-dec-sec>}*<block-body>
 	private int Block(){
 		int recur = 0;   //Return value used later
 		if (anyErrors) { // Error check for fast exit, error status -1
@@ -106,7 +105,6 @@ public class Syntactic {
 		}
 
 		trace("Block", true);
-
 
 		while (token.code == lex.codeFor("VAR__")) {
 			token = lex.GetNextToken();
@@ -119,21 +117,19 @@ public class Syntactic {
 		recur = BlockBody();
 
 		trace("Block", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
-
 	}
 
 	//Nonterminal for variable declaration section of program
 	//<variable-dec-sec> -> $VAR <variable-declaration>
 	private int VariableDecSec(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
 		trace("VariableDecSec", true);
-
 
 		if (token.code == lex.codeFor("VAR__")) {
 			token = lex.GetNextToken();
@@ -141,9 +137,8 @@ public class Syntactic {
 
 		recur = VariableDeclaration();
 
-
 		trace("VariableDecSec", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 
 	}
@@ -152,40 +147,35 @@ public class Syntactic {
 	//<variable-declaration> -> {<identifier> {$COMMA <identifier>}* $COLON <simple type> $SEMICOLON}+ 
 	private int VariableDeclaration(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
 		trace("VariableDeclaration", true);
 
-
-		while (token.code == lex.codeFor("IDENT")) {
+		while (token.code == lex.codeFor("IDENT") && !anyErrors) {
 			token = lex.GetNextToken();
 
 			recur = Identifier();
 
-			while  (token.code == lex.codeFor("COMMA")) {
+			while  (token.code == lex.codeFor("COMMA") && !anyErrors) {
 				token = lex.GetNextToken();
 				recur = Identifier();
 			}
 
 			if (token.code == lex.codeFor("COLON")) {
 				token = lex.GetNextToken();
-			}else {
-				//TODO error checking, should except expecting colon here
 			}
 
 			recur = SimpleType();
 
 			if (token.code == lex.codeFor("SEMIC")) {
 				token = lex.GetNextToken();
-			}else {
-				//TODO error checking, should except expecting semicolon here
 			}
 		}
 
 		trace("VariableDeclaration", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 
 	}
@@ -206,17 +196,9 @@ public class Syntactic {
 				token = lex.GetNextToken();
 				recur = Statement();
 			}
-			//			if (token.code == lex.codeFor("END__")) {
-			//				token = lex.GetNextToken();
-			//			} else {
-			//				error(lex.reserveFor("END__"), token.lexeme);
-			//			}
-
 		} else if (token.code == lex.codeFor("END__")) {
 			token = lex.GetNextToken();
-			//		} else {
-			//			error(lex.reserveFor("END__"), token.lexeme);
-		}else {
+		} else {
 			error(lex.reserveFor("BEGIN"), token.lexeme);
 		}
 
@@ -224,15 +206,14 @@ public class Syntactic {
 		return recur;
 	}
 
-
-	//TODO extend assignment for new cfg
 	//Not a NT, but used to shorten Statement code body for readability.   
-	// <variable> $ASSIGN (<simple expression> | <string literal>)
+	//<variable> $ASSIGN (<simple expression> | <string literal>)
 	private int handleAssignment() {
 		int recur = 0;
 		if (anyErrors) {
 			return -1;
 		}
+		
 		trace("handleAssignment", true);
 		//have ident already in order to get to here, handle as Variable
 		recur = Variable();  //Variable moves ahead, next token ready
@@ -249,10 +230,10 @@ public class Syntactic {
 	}
 
 	//Not a NT, but used to shorten Statement code body for readability.
-	// $IF <relexpression> $THEN <statement>[$ELSE <statement>]
+	//$IF <relexpression> $THEN <statement>[$ELSE <statement>]
 	private int handleIf(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -280,7 +261,7 @@ public class Syntactic {
 
 
 		trace("handleIf", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 
 	} 
@@ -289,7 +270,7 @@ public class Syntactic {
 	//$DOWHILE <relexpression> <statement>
 	private int handleDoWhile(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -302,7 +283,7 @@ public class Syntactic {
 		recur = Statement();
 
 		trace("handleDoWhile", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 	} 
 
@@ -310,7 +291,7 @@ public class Syntactic {
 	//$REPEAT <statement> $UNTIL <relexpression>
 	private int handleRepeat(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -329,7 +310,7 @@ public class Syntactic {
 		recur = RelExpression();
 
 		trace("handleRepeat", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 
 	} 
@@ -338,7 +319,7 @@ public class Syntactic {
 	//$FOR <variable> $ASSIGN <simple expression> $TO <simple expression> $DO <statement>
 	private int handleFor(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -373,16 +354,16 @@ public class Syntactic {
 		recur = Statement();
 
 		trace("handleFor", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 
 	} 
 
 	//Not a NT, but used to shorten Statement code body for readability.
-	// $WRITELN $LPAR (<simple expression> | <identifier> |<stringconst> ) $RPAR
+	//$WRITELN $LPAR (<simple expression> | <identifier> |<stringconst> ) $RPAR
 	private int handleWriteline(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -407,7 +388,6 @@ public class Syntactic {
 			error("", token.lexeme);
 		}
 
-
 		if (token.code == lex.codeFor("RPRNT")) {
 			token = lex.GetNextToken();
 		} else if (!anyErrors){
@@ -415,7 +395,7 @@ public class Syntactic {
 		}
 
 		trace("handleWriteline", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 
 	} 
@@ -424,7 +404,7 @@ public class Syntactic {
 	//$READLN $LPAR <identifier> $RPAR
 	private int handleReadline(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -446,7 +426,7 @@ public class Syntactic {
 			error("RPRNT", token.lexeme);
 		}
 		trace("handleReadline", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 
 	} 
@@ -479,7 +459,6 @@ public class Syntactic {
 		return recur;
 	}
 
-	//TODO Extend block body into statement
 	// Handles all possible statement starts in a nested if/else structure.
 	//<statement>-> { 
 	//	[
@@ -504,9 +483,9 @@ public class Syntactic {
 
 		trace("Statement", true);
 
-		if (token.code == lex.codeFor("IDENT")) {  //must be an ASSIGNMENT
+		if (token.code == lex.codeFor("IDENT")) {
 			recur = handleAssignment();
-		} else if (token.code == lex.codeFor("IF___")) {  //must be an IF
+		} else if (token.code == lex.codeFor("IF___")) {
 			recur = handleIf();
 		} else if (token.code == lex.codeFor("DWHLE")){
 			recur = handleDoWhile();
@@ -524,13 +503,11 @@ public class Syntactic {
 			error("Statement start", token.lexeme);
 		}
 
+		//Scan through errored line for next statement
 		if (anyErrors) {
 			anyErrors = false;
 			while (token.code != lex.codeFor("SEMIC") && token.code != lex.codeFor("END__")) {
 				token = lex.GetNextToken();
-				//				if (token.code == lex.codeFor()) {
-				//					
-				//				}
 			}
 		}
 
@@ -539,7 +516,7 @@ public class Syntactic {
 	}
 
 	//Non-terminal VARIABLE just looks for an IDENTIFIER.  Later, a
-	//  type-check can verify compatible math ops, or if casting is required.
+	//type-check can verify compatible math ops, or if casting is required.
 	//<variable> -> <identifier> 
 	private int Variable(){
 		int recur = 0;
@@ -580,7 +557,7 @@ public class Syntactic {
 		}
 
 		trace("Term", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 	}  
 
@@ -603,7 +580,7 @@ public class Syntactic {
 		}
 
 		trace("Sign", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 	}
 
@@ -612,7 +589,7 @@ public class Syntactic {
 	//<factor> -> <unsigned constant> | <variable> | $LPAR    <simple expression>    $RPAR
 	private int Factor(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -639,15 +616,15 @@ public class Syntactic {
 		}
 
 		trace("Factor", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 	} 
 
 	//Relational expression nonterminal
-	//	<relexpression> -> <simple expression> <relop> <simple expression>
+	//<relexpression> -> <simple expression> <relop> <simple expression>
 	private int RelExpression(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -658,7 +635,7 @@ public class Syntactic {
 		recur = SimpleExpression();
 
 		trace("RelExpression", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 
 	} 
@@ -667,7 +644,7 @@ public class Syntactic {
 	//<relop> -> $EQ | $LSS | $GTR | $NEQ | $LEQ | $GEQ
 	private int RelOp(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -690,7 +667,7 @@ public class Syntactic {
 		}
 
 		trace("RelOp", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 
 	} 
@@ -699,7 +676,7 @@ public class Syntactic {
 	//<unsigned constant>-> <unsigned number>
 	private int UnsignedConstant(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -713,7 +690,7 @@ public class Syntactic {
 		}
 
 		trace("UnsignedConstant", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 	}  
 
@@ -721,7 +698,7 @@ public class Syntactic {
 	//<unsigned number>-> $FLOAT | $INTEGER
 	private int UnsignedNumber(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -735,7 +712,7 @@ public class Syntactic {
 		}
 
 		trace("UnsignedNumber", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 	}  
 
@@ -743,7 +720,7 @@ public class Syntactic {
 	//<identifier> -> $IDENTIFIER
 	private int Identifier(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -754,7 +731,7 @@ public class Syntactic {
 		}
 
 		trace("Identifier", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 
 	}
@@ -763,12 +740,11 @@ public class Syntactic {
 	//<simple type> -> $INTEGER | $FLOAT | $STRING
 	private int SimpleType(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
 		trace("SimpleType", true);
-
 
 		if (token.code == lex.codeFor("INTGR")) {
 			token = lex.GetNextToken();
@@ -780,8 +756,6 @@ public class Syntactic {
 			token = lex.GetNextToken();
 		}
 
-		//TODO bounding and case checking, must be one of these three
-
 		trace("SimpleType", false);
 		// Final result of assigning to "recur" in the body is returned
 		return recur;
@@ -791,7 +765,7 @@ public class Syntactic {
 	//<mulop> -> $MULTIPLY | $DIVIDE
 	private int Mulop(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -805,7 +779,7 @@ public class Syntactic {
 		}
 
 		trace("Mulop", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 	}
 
@@ -813,7 +787,7 @@ public class Syntactic {
 	//<addop> -> $PLUS | $MINUS
 	private int Addop(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -827,7 +801,7 @@ public class Syntactic {
 		}
 
 		trace("Addop", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 	}  
 
@@ -835,7 +809,7 @@ public class Syntactic {
 	//<stringconst> -> $STRINGTYPE
 	private int StringConstant(){
 		int recur = 0;   //Return value used later
-		if (anyErrors) { // Error check for fast exit, error status -1
+		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
 
@@ -848,7 +822,7 @@ public class Syntactic {
 		}
 
 		trace("StringConstant", false);
-		// Final result of assigning to "recur" in the body is returned
+		//Final result of assigning to "recur" in the body is returned
 		return recur;
 
 	} 
