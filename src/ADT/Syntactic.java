@@ -196,11 +196,13 @@ public class Syntactic {
 				token = lex.GetNextToken();
 				recur = Statement();
 			}
-		} else if (token.code == lex.codeFor("END__")) {
-			token = lex.GetNextToken();
-		} else {
-			error(lex.reserveFor("BEGIN"), token.lexeme);
 		}
+		if (token.code == lex.codeFor("END__")) {
+			token = lex.GetNextToken();
+		}
+//			else {
+//			error(lex.reserveFor("BEGIN"), token.lexeme);
+//		}
 
 		trace("Block-body", false);
 		return recur;
@@ -254,11 +256,7 @@ public class Syntactic {
 		if (token.code == lex.codeFor("ELSE_")) {
 			token = lex.GetNextToken();
 			recur = Statement();
-		} 
-		else if (!anyErrors){
-			error("ELSE_", token.lexeme);
 		}
-
 
 		trace("handleIf", false);
 		//Final result of assigning to "recur" in the body is returned
