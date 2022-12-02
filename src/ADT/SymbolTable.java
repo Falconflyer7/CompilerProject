@@ -61,7 +61,7 @@ public class SymbolTable {
 
 		index++;
 		
-		if (declarationComplete) {
+		if (Character.toLowerCase(usage) ==  'v' && declarationComplete) {
 			undeclaredError(name);
 		}
 		return currentIndex;
@@ -94,7 +94,7 @@ public class SymbolTable {
 
 		index++;
 		
-		if (declarationComplete) {
+		if (Character.toLowerCase(usage) ==  'v' && declarationComplete) {
 			undeclaredError(name);
 		}
 		return currentIndex;
@@ -127,7 +127,7 @@ public class SymbolTable {
 		data.add(currentIndex, tableItem);
 
 		index++;
-		if (declarationComplete) {
+		if (Character.toLowerCase(usage) ==  'v' && declarationComplete) {
 			undeclaredError(name);
 		}
 		return currentIndex;
