@@ -496,6 +496,7 @@ public class Syntactic {
 		int right = 0;
 		int signval = 0;
 		int temp = 0;
+		int loopcount = 0;
 		int opcode = 0;
 
 		if (anyErrors) {
@@ -529,10 +530,10 @@ public class Syntactic {
 			recur = Addop();
 
 			right = Term();
-			temp = symbolList.AddSymbol("temp", 'v', 0);
+			temp = symbolList.AddSymbol("@"+loopcount, 'v', 0);
 			quads.AddQuad(opcode, left, right, temp);
 			left = temp;
-
+			loopcount++;
 
 		}	
 
@@ -727,7 +728,7 @@ public class Syntactic {
 		left = SimpleExpression();
 		saveRelop = RelOp();
 		right = SimpleExpression();
-		temp = symbolList.AddSymbol("temp", 'v', 0);
+		temp = symbolList.AddSymbol("@@temp", 'v', 0);
 		quads.AddQuad(interp.opcodeFor("SUB"), left, right, saveRelop);
 		result = quads.NextQuad();
 		quads.AddQuad(relopToOpcode(saveRelop), temp, 0, 0);
@@ -749,17 +750,22 @@ public class Syntactic {
 		trace("RelOp", true);
 
 		if (token.code == lex.codeFor("EQUAL")){
-//			recur = token.code;
+			recur = token.code;
 			token = lex.GetNextToken();
 		} else if (token.code == lex.codeFor("LSTHN")) {
+			recur = token.code;
 			token = lex.GetNextToken();
 		} else if (token.code == lex.codeFor("GRTHN")) {
+			recur = token.code;
 			token = lex.GetNextToken();
 		} else if (token.code == lex.codeFor("NTEQL")) {
+			recur = token.code;
 			token = lex.GetNextToken();
 		} else if (token.code == lex.codeFor("LSTEQ")) {
+			recur = token.code;
 			token = lex.GetNextToken();
 		} else if (token.code == lex.codeFor("GRTEQ")) {
+			recur = token.code;
 			token = lex.GetNextToken();
 		} else {
 			error("RelationalOperator", token.lexeme);
@@ -932,20 +938,19 @@ public class Syntactic {
 	int relopToOpcode(int relop){
 		int result = 0;
 		
-		if (relop == 0) {
+		if (relop == lex.codeFor("EQUAL")) {
 			result = interp.opcodeFor("BNZ");
-		} else if (relop != 0) {
+		} else if (relop == lex.codeFor("NTEQL")) {
 			result = interp.opcodeFor("BZ");
-		} else if (relop < 0) {
+		} else if (relop == lex.codeFor("LSTHN")) {
 			result = interp.opcodeFor("BNN");
-		} else if (relop > 0) {
+		} else if (relop == lex.codeFor("GRTHN")) {
 			result = interp.opcodeFor("BNP");
-		} else if (relop <= 0) {
+		} else if (relop == lex.codeFor("LSTEQ")) {
 			result = interp.opcodeFor("BP");
-		} else if (relop >= 0) {
+		} else if (relop == lex.codeFor("GRTEQ")) {
 			result = interp.opcodeFor("BN");
 		}
-		
 		 return result;	
 	}
 
