@@ -1,0 +1,15 @@
+Index Name                            Use Typ Value
+  0  | -1                            |c  |I  |-1
+  1  |  1                            |c  |I  |1
+  2  |CodegenBASIC                   |P  |I  |0
+  3  |BASIC TEST File FA22           |c  |S  |BASIC TEST File FA22
+  4  |String printout:  Hello World  |c  |S  |String printout:  Hello World
+  5  |  a                            |v  |I  |0
+  6  |  2                            |c  |I  |2
+  7  |  b                            |v  |I  |0
+  8  |  3                            |c  |I  |3
+  9  |temp                           |v  |I  |0
+ 10  |a is now                       |c  |S  |a is now 
+ 11  |Input a value of 25 for a:     |c  |S  |Input a value of 25 for a: 
+ 12  |After READLN, a is now         |c  |S  |After READLN, a is now 
+ 13  |All done.                      |c  |S  |All done.
