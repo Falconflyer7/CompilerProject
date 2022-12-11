@@ -1,0 +1,19 @@
+{This file includes the basic WRITELN, READLN, and EXPRESSION tests.
+}
+UNIT CodegenBASIC;
+begin
+WRITELN("BASIC TEST File FA22");
+
+WRITELN("String printout:  Hello World");
+
+a := 2;
+b := 3;
+a := a *(3+b)+ a + 2*b/2 - 1;  {The result: 16}
+WRITELN("a is now ");
+WRITELN(a);
+WRITELN("Input a value of 25 for a: ");
+READLN(a);
+WRITELN("After READLN, a is now ");
+WRITELN(a);
+WRITELN("All done.")
+end. 

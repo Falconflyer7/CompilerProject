@@ -17,6 +17,8 @@ import java.util.ArrayList;
  */
 public class SymbolTable {
 
+	public static final char CONSTANT_KIND = 'c';
+	public static final char VARIABLE_KIND = 'v';
 	//class private variables
 	private int maxSize;
 	private int index = 0;
@@ -61,7 +63,7 @@ public class SymbolTable {
 
 		index++;
 		
-		if (Character.toLowerCase(usage) ==  'v' && declarationComplete) {
+		if (Character.toLowerCase(usage) ==  VARIABLE_KIND && declarationComplete) {
 			undeclaredError(name);
 		}
 		return currentIndex;
@@ -94,7 +96,7 @@ public class SymbolTable {
 
 		index++;
 		
-		if (Character.toLowerCase(usage) ==  'v' && declarationComplete) {
+		if (Character.toLowerCase(usage) ==  VARIABLE_KIND && declarationComplete) {
 			undeclaredError(name);
 		}
 		return currentIndex;
@@ -127,7 +129,7 @@ public class SymbolTable {
 		data.add(currentIndex, tableItem);
 
 		index++;
-		if (Character.toLowerCase(usage) ==  'v' && declarationComplete) {
+		if (Character.toLowerCase(usage) ==  VARIABLE_KIND && declarationComplete) {
 			undeclaredError(name);
 		}
 		return currentIndex;

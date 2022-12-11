@@ -375,4 +375,8 @@ public class Interpreter {
 		return null;
 	}
 
+	public int opcodeFor(String string) {
+		return this.reserveTable.LookupName(string);
+	}
+
 }
