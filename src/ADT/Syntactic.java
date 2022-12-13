@@ -444,7 +444,7 @@ public class Syntactic {
 		} else if (!anyErrors){
 			error("", token.lexeme);
 		}
-		quads.AddQuad(interp.opcodeFor("PRINT"), toprint, 0, 0);
+		quads.AddQuad(interp.opcodeFor("PRINT"), 0, 0, toprint);
 		if (token.code == lex.codeFor("RPRNT")) {
 			token = lex.GetNextToken();
 		} else if (!anyErrors){
@@ -514,7 +514,7 @@ public class Syntactic {
 		left = Term();
 
 		if (signval == -1) {//Add a negation quad
-			quads.AddQuad(interp.opcodeFor("MULT"),left,Minus1Index,left);
+			quads.AddQuad(interp.opcodeFor("MUL"),left,Minus1Index,left);
 		}
 
 		while(token.code == lex.codeFor("ADD__") || token.code == lex.codeFor("SUBTR")) {

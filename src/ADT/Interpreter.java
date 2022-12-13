@@ -76,7 +76,7 @@ public class Interpreter {
 		qt.AddQuad(6, 2, 0, 0);
 
 	}
-	
+
 	/**
 	 * Hard coded method to initialize a factorial algorithm symbol and quad table
 	 * @param st symbol table to build
@@ -124,14 +124,14 @@ public class Interpreter {
 
 		//Loop over quads under PC until program stop
 		while (pc < quadTable.GetMaxQuadTableSize()) {
-			
+
 			//get next quad table values at program counter
 			opcode = quadTable.GetQuad(pc)[0];
 			op1 = quadTable.GetQuad(pc)[1];
 			op2 = quadTable.GetQuad(pc)[2];
 			op3 = quadTable.GetQuad(pc)[3];
 			int temp;
-			
+
 			if (opcodeValidation(opcode)) {
 
 				//Run trace
@@ -201,15 +201,33 @@ public class Interpreter {
 					break;
 
 					//READ code
+					//				case READ:
+					//					Scanner scanner = new Scanner(System.in);
+					//					temp = Integer.valueOf(scanner.nextLine());
+					//					symbolTable.UpdateSymbol(op3, 'v', temp);
+					//					//Increment program counter after code execution
+					//					pc++;
+					//					break;
+
 				case READ:
-					Scanner scanner = new Scanner(System.in);
-					temp = Integer.valueOf(scanner.nextLine());
-					symbolTable.UpdateSymbol(op3, 'v', temp);
-					//Increment program counter after code execution
+					// Assume parameter/operand must be an integer value
+				{
+					// Make a scanner to read from CONSOLE
+					Scanner sc = new Scanner(System.in);
+					// Put out a prompt to the user
+					System.out.print('>');
+					// Read one integer only
+					int readval = sc.nextInt();
+					// Op3 has the SymbolTable index we need, update its value
+					symbolTable.UpdateSymbol(op3,'i',readval);
+					// Deallocate the scanner
+					sc.close();
+					sc = null;
 					pc++;
 					break;
+				}
 
-					//JMP code
+				//JMP code
 				case JMP:
 					pc = op3;
 					break;
@@ -288,7 +306,7 @@ public class Interpreter {
 			e.printStackTrace();
 		}
 
-		
+
 	}
 
 	/**
