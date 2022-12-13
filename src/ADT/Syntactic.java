@@ -427,29 +427,24 @@ public class Syntactic {
 
 		if (token.code == lex.codeFor("LPRNT")) {
 			token = lex.GetNextToken();
+			
+			if (token.code == lex.codeFor("IDENT") || token.code == lex.codeFor("SCNST")) {
+				toprint = symbolList.LookupSymbol(token.lexeme);
+				token = lex.GetNextToken();
+			} else {
+				toprint = SimpleExpression();
+			}
+			quads.AddQuad(interp.opcodeFor("PRINT"), 0, 0, toprint);
+			if (token.code == lex.codeFor("RPRNT")) {
+				token = lex.GetNextToken();
+			} else if (!anyErrors){
+				error(")", token.lexeme);
+			}
 		} else {
 			error("(", token.lexeme);
 		}
 
-		if (token.code == lex.codeFor("IDENT")) {
-			toprint = symbolList.LookupSymbol(token.lexeme);
-			recur = Identifier();
-		} else if (token.code == lex.codeFor("SCNST")){
-			toprint = symbolList.LookupSymbol(token.lexeme);
-			recur = StringConstant();
-		} else if (token.code == lex.codeFor("ADD__") || token.code == lex.codeFor("SUBTR") || token.code == lex.codeFor("LPRNT") 
-				|| token.code == lex.codeFor("ICNST") || token.code == lex.codeFor("FCNST") || token.code == lex.codeFor("IDENT")) {
-			toprint = SimpleExpression();
-			recur = SimpleExpression();
-		} else if (!anyErrors){
-			error("", token.lexeme);
-		}
-		quads.AddQuad(interp.opcodeFor("PRINT"), 0, 0, toprint);
-		if (token.code == lex.codeFor("RPRNT")) {
-			token = lex.GetNextToken();
-		} else if (!anyErrors){
-			error(")", token.lexeme);
-		}
+		
 
 		trace("handleWriteline", false);
 		//Final result of assigning to "recur" in the body is returned
@@ -612,7 +607,7 @@ public class Syntactic {
 		trace("Variable", true);
 		if ((token.code == lex.codeFor("IDENT"))) {
 			//return the location of this variable for Quad use
-			recur = Identifier();
+			recur = symbolList.LookupSymbol(token.lexeme);
 			token = lex.GetNextToken();
 		} else {
 			error("Variable", token.lexeme);
@@ -621,6 +616,28 @@ public class Syntactic {
 		trace("Variable", false);
 		return recur;
 	}  
+
+	//Identifier terminal
+	//<identifier> -> $IDENTIFIER
+	private int Identifier(){
+		int recur = 0;   //Return value used later
+		if (anyErrors) { //Error check for fast exit, error status -1
+			return -1;
+		}
+	
+		trace("Identifier", true);
+	
+		if (token.code == lex.codeFor("IDENT")) {
+			token = lex.GetNextToken();
+//			recur = symbolList.LookupSymbol(token.lexeme);
+	
+		}
+	
+		trace("Identifier", false);
+		//Final result of assigning to "recur" in the body is returned
+		return recur;
+	
+	}
 
 	//Term nonterminal
 	//<term> -> <factor> {<mulop>  <factor> }*
@@ -821,27 +838,6 @@ public class Syntactic {
 		//Final result of assigning to "recur" in the body is returned
 		return recur;
 	}  
-
-	//Identifier terminal
-	//<identifier> -> $IDENTIFIER
-	private int Identifier(){
-		int recur = 0;   //Return value used later
-		if (anyErrors) { //Error check for fast exit, error status -1
-			return -1;
-		}
-
-		trace("Identifier", true);
-
-		if (token.code == lex.codeFor("IDENT")) {
-			recur = symbolList.LookupSymbol(token.lexeme);
-
-		}
-
-		trace("Identifier", false);
-		//Final result of assigning to "recur" in the body is returned
-		return recur;
-
-	}
 
 	//Simple type terminal
 	//<simple type> -> $INTEGER | $FLOAT | $STRING
