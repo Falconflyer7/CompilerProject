@@ -144,7 +144,7 @@ public class Syntactic {
 		}
 
 		//Variable declaration complete, will now complain when you use undeclared variables
-		symbolList.DeclarationComplete();
+		//		symbolList.DeclarationComplete();
 
 		recur = BlockBody();
 
@@ -251,6 +251,7 @@ public class Syntactic {
 		//have ident already in order to get to here, handle as Variable
 		left = Variable();  //Variable moves ahead, next token ready
 
+		//Code gen for assignment operation
 		if (token.code == lex.codeFor("ASSGN")) {
 			token = lex.GetNextToken();
 			right = SimpleExpression();
@@ -282,6 +283,7 @@ public class Syntactic {
 		if (token.code == lex.codeFor("THEN_")) {
 			token = lex.GetNextToken();
 
+			//If statement code generation, handles jump instructions
 			recur = Statement();
 			if (token.code == lex.codeFor("ELSE_")) {
 				token = lex.GetNextToken();
@@ -321,6 +323,7 @@ public class Syntactic {
 		//Call for token after dowhile
 		token = lex.GetNextToken();
 
+		//Code gen for do while, handles jumps for looping
 		saveTop = quads.NextQuad();
 
 		branchQuad = RelExpression();
@@ -419,9 +422,9 @@ public class Syntactic {
 
 		token = lex.GetNextToken();
 
+		//Code gen for write line
 		if (token.code == lex.codeFor("LPRNT")) {
 			token = lex.GetNextToken();
-			/// || token.code == lex.codeFor("IDENT")
 			if (token.code == lex.codeFor("SCNST")) {
 				toprint = symbolList.LookupSymbol(token.lexeme);
 				token = lex.GetNextToken();
@@ -460,7 +463,8 @@ public class Syntactic {
 		} else if (!anyErrors){
 			error("LPRNT", token.lexeme);
 		}
-
+		
+		//Code gen for readline, accepts input from console
 		readLocation = symbolList.LookupSymbol(token.lexeme);
 		quads.AddQuad(interp.opcodeFor("READ"), 0, 0, readLocation);
 		recur = Identifier();
@@ -503,6 +507,7 @@ public class Syntactic {
 			quads.AddQuad(interp.opcodeFor("MUL"),left,Minus1Index,left);
 		}
 
+		//Code gen for add/sub operations in an expression
 		while(token.code == lex.codeFor("ADD__") || token.code == lex.codeFor("SUBTR")) {
 			if (token.code == lex.codeFor("ADD__")){
 				opcode = interp.opcodeFor("ADD");
@@ -639,7 +644,7 @@ public class Syntactic {
 		//CFG rule must call into factor at least once
 		left = Factor();
 
-		//Optional additional multiplication and factor nonterminal calls
+		//Code gen for multiplication terms in an expression
 		while ((token.code == lex.codeFor("MULTI") && !anyErrors) ||  (token.code == lex.codeFor("DIVID") && !anyErrors)){
 			opcode = Mulop();
 			right = Factor();
@@ -665,6 +670,7 @@ public class Syntactic {
 
 		trace("Sign", true);
 
+		//signing in code gen
 		if (token.code == lex.codeFor("SUBTR")){
 			recur = -1;
 		}
@@ -732,6 +738,7 @@ public class Syntactic {
 
 		trace("RelExpression", true);
 
+		//Code gen for relational expressions
 		left = SimpleExpression();
 		saveRelop = RelOp();
 		right = SimpleExpression();
