@@ -25,6 +25,8 @@ public class Syntactic {
 	private final int quadSize = 1000;
 	private int Minus1Index;
 	private int Plus1Index;
+	
+	private int tempVarCount = 0;
 
 	/**
 	 * Class constructor
@@ -491,7 +493,6 @@ public class Syntactic {
 		int right = 0;
 		int signval = 0;
 		int temp = 0;
-		int loopcount = 0;
 		int opcode = 0;
 
 		if (anyErrors) {
@@ -515,20 +516,20 @@ public class Syntactic {
 		while(token.code == lex.codeFor("ADD__") || token.code == lex.codeFor("SUBTR")) {
 			if (token.code == lex.codeFor("ADD__")){
 				opcode = interp.opcodeFor("ADD");
-
 			} else {
 				opcode = interp.opcodeFor("SUB");
 			}
 
 
 
-			recur = Addop();
+//			recur = Addop();
+			token = lex.GetNextToken();
 
 			right = Term();
-			temp = symbolList.AddSymbol("@"+loopcount, 'v', 0);
+			temp = symbolList.AddSymbol("@"+tempVarCount, 'v', 0);
 			quads.AddQuad(opcode, left, right, temp);
 			left = temp;
-			loopcount++;
+			tempVarCount++;
 
 		}	
 
@@ -643,6 +644,11 @@ public class Syntactic {
 	//<term> -> <factor> {<mulop>  <factor> }*
 	private int Term(){
 		int recur = 0;   //Return value used later
+		int left = 0;
+		int right = 0;
+		int temp = 0;
+		int opcode = 0;
+		
 		if (anyErrors) { // Error check for fast exit, error status -1
 			return -1;
 		}
@@ -651,17 +657,20 @@ public class Syntactic {
 
 		//Factor nonterminal call
 		//CFG rule must call into factor at least once
-		recur = Factor();
+		left = Factor();
 
 		//Optional additional multiplication and factor nonterminal calls
 		while ((token.code == lex.codeFor("MULTI") && !anyErrors) ||  (token.code == lex.codeFor("DIVID") && !anyErrors)){
-			recur = Mulop();
-			recur = Factor();
+			opcode = Mulop();
+			right = Factor();
+			temp = symbolList.AddSymbol("@"+tempVarCount, SymbolTable.VARIABLE_KIND, 0);
+			quads.AddQuad(opcode, left, right, temp);
+			left = temp;
 		}
 
 		trace("Term", false);
 		//Final result of assigning to "recur" in the body is returned
-		return recur;
+		return left;
 	}  
 
 	//Sign terminal
@@ -875,7 +884,11 @@ public class Syntactic {
 		trace("Mulop", true);
 
 		//Iterate token if mulop found
-		if (token.code == lex.codeFor("DIVID") || token.code == lex.codeFor("MULTI")) {
+		if (token.code == lex.codeFor("MULTI")) {
+			recur = interp.opcodeFor("MUL");
+			token = lex.GetNextToken();
+		} else if (token.code == lex.codeFor("DIVID")) {
+			recur = interp.opcodeFor("DIV");
 			token = lex.GetNextToken();
 		} else {
 			error("Mulop", token.lexeme);
