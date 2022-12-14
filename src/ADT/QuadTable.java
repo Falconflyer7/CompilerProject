@@ -10,7 +10,6 @@ import java.io.OutputStreamWriter;
  * @author Mark Fish
  * Class for Quad Table abstract data type
  * Constructs a 2d array indexed linearly containing an opcode and 3 operands
- *
  */
 public class QuadTable {
 

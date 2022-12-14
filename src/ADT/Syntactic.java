@@ -3,8 +3,7 @@ package ADT;
 /**
  * Syntax Analyzer class
  * Uses previously developed ADTs to accept an input program and runs a recursive parse tree on program tokens
- * INCOMPLETE, Code for assignment PART A
- * @author abrouill, Mark Fish
+ * @author  Mark Fish
  */
 public class Syntactic {
 
@@ -19,13 +18,14 @@ public class Syntactic {
 	//symbol size variable
 	private final int symbolSize = 250;
 
-	//New local vairables for code gen
+	//New local variables for code gen
 	private QuadTable quads;
 	private Interpreter interp;
 	private final int quadSize = 1000;
 	private int Minus1Index;
 	private int Plus1Index;
 
+	//Code gen temp variables for symbol table entries generated during runtime
 	private int tempVarCount = 0;
 	private int tempRelExpCount = 0;
 
@@ -75,7 +75,7 @@ public class Syntactic {
 		symbolList.PrintSymbolTable(filenameBase + "ST-after.txt");
 	}
 
-	//Non Terminal PROGIDENTIFIER is fully implemented here, leave it as-is.
+	//Non Terminal PROGIDENTIFIER
 	//<prog-identifier> -> <identifier>
 	private int ProgIdentifier() {
 		int recur = 0;
@@ -232,9 +232,6 @@ public class Syntactic {
 		if (token.code == lex.codeFor("END__")) {
 			token = lex.GetNextToken();
 		}
-		//			else {
-		//			error(lex.reserveFor("BEGIN"), token.lexeme);
-		//		}
 
 		trace("Block-body", false);
 		return recur;
@@ -289,7 +286,6 @@ public class Syntactic {
 			if (token.code == lex.codeFor("ELSE_")) {
 				token = lex.GetNextToken();
 				patchElse = quads.NextQuad();
-				//TODO verify jump instruction "branchop"
 				quads.AddQuad(interp.opcodeFor("JMP"), 0, 0, 0);
 				quads.UpdateJump(branchQuad, quads.NextQuad());
 
@@ -328,22 +324,11 @@ public class Syntactic {
 		saveTop = quads.NextQuad();
 
 		branchQuad = RelExpression();
-		
-		
-		
-//		if (token.code == lex.codeFor("DO___")) {
-//			token = lex.GetNextToken();
-			recur = Statement();
-			
-//			if (token.code == lex.codeFor("END___")){
-				quads.AddQuad(interp.opcodeFor("JMP"), 0, 0, saveTop);
-				quads.UpdateJump(branchQuad, quads.NextQuad());
-//				token = lex.GetNextToken();
-//			}
-			
 
-//		}
+		recur = Statement();
 
+		quads.AddQuad(interp.opcodeFor("JMP"), 0, 0, saveTop);
+		quads.UpdateJump(branchQuad, quads.NextQuad());
 
 		trace("handleDoWhile", false);
 		//Final result of assigning to "recur" in the body is returned
@@ -419,52 +404,8 @@ public class Syntactic {
 		trace("handleFor", false);
 		//Final result of assigning to "recur" in the body is returned
 		return recur;
-
 	} 
-	
-//	private int handleWriteline(){
-//		int recur = 0;   //Return value used later
-//		int toprint = 0;
-//		if (anyErrors) { //Error check for fast exit, error status -1
-//			return -1;
-//		}
-//
-//		trace("handleWriteline", true);
-//
-//		token = lex.GetNextToken();
-//
-//		if (token.code == lex.codeFor("LPRNT")) {
-//			token = lex.GetNextToken();
-//		} else {
-//			error("(", token.lexeme);
-//		}
-//
-//		if (token.code == lex.codeFor("IDENT")) {
-//			toprint = symbolList.LookupSymbol(token.lexeme);
-//			recur = Identifier();
-//		} else if (token.code == lex.codeFor("SCNST")){
-//			toprint = symbolList.LookupSymbol(token.lexeme);
-//			recur = StringConstant();
-//		} else if (token.code == lex.codeFor("ADD__") || token.code == lex.codeFor("SUBTR") || token.code == lex.codeFor("LPRNT") 
-//				|| token.code == lex.codeFor("ICNST") || token.code == lex.codeFor("FCNST") || token.code == lex.codeFor("IDENT")) {
-//			toprint = SimpleExpression();
-//			recur = SimpleExpression();
-//		} else if (!anyErrors){
-//			error("", token.lexeme);
-//		}
-//		quads.AddQuad(interp.opcodeFor("PRINT"), toprint, 0, 0);
-//		if (token.code == lex.codeFor("RPRNT")) {
-//			token = lex.GetNextToken();
-//		} else if (!anyErrors){
-//			error(")", token.lexeme);
-//		}
-//
-//		trace("handleWriteline", false);
-//		//Final result of assigning to "recur" in the body is returned
-//		return recur;
-//
-//	}
-	
+
 	//Not a NT, but used to shorten Statement code body for readability.
 	//$WRITELN $LPAR (<simple expression> | <identifier> |<stringconst> ) $RPAR
 	private int handleWriteline(){
@@ -480,7 +421,7 @@ public class Syntactic {
 
 		if (token.code == lex.codeFor("LPRNT")) {
 			token = lex.GetNextToken();
-/// || token.code == lex.codeFor("IDENT")
+			/// || token.code == lex.codeFor("IDENT")
 			if (token.code == lex.codeFor("SCNST")) {
 				toprint = symbolList.LookupSymbol(token.lexeme);
 				token = lex.GetNextToken();
@@ -499,7 +440,6 @@ public class Syntactic {
 		trace("handleWriteline", false);
 		//Final result of assigning to "recur" in the body is returned
 		return recur;
-
 	} 
 
 	//Not a NT, but used to shorten Statement code body for readability.
@@ -520,11 +460,10 @@ public class Syntactic {
 		} else if (!anyErrors){
 			error("LPRNT", token.lexeme);
 		}
-		
+
 		readLocation = symbolList.LookupSymbol(token.lexeme);
 		quads.AddQuad(interp.opcodeFor("READ"), 0, 0, readLocation);
 		recur = Identifier();
-		
 
 		if (token.code == lex.codeFor("RPRNT")) {
 			token = lex.GetNextToken();
@@ -534,7 +473,6 @@ public class Syntactic {
 		trace("handleReadline", false);
 		//Final result of assigning to "recur" in the body is returned
 		return recur;
-
 	} 
 
 	//Simple Expression nonterminal
@@ -572,9 +510,6 @@ public class Syntactic {
 				opcode = interp.opcodeFor("SUB");
 			}
 
-
-
-			//			recur = Addop();
 			token = lex.GetNextToken();
 
 			right = Term();
@@ -582,10 +517,7 @@ public class Syntactic {
 			quads.AddQuad(opcode, left, right, temp);
 			left = temp;
 			tempVarCount++;
-
 		}	
-
-		//Optional additional addop and term nonterminal calls
 
 		trace("SimpleExpression", false);
 		return left;
@@ -656,7 +588,6 @@ public class Syntactic {
 			return -1;
 		}
 
-		//TODO Checking variable - weird provided code - needs to type check
 		trace("Variable", true);
 		if ((token.code == lex.codeFor("IDENT"))) {
 			//return the location of this variable for Quad use
@@ -682,14 +613,11 @@ public class Syntactic {
 
 		if (token.code == lex.codeFor("IDENT")) {
 			token = lex.GetNextToken();
-			//			recur = symbolList.LookupSymbol(token.lexeme);
-
 		}
 
 		trace("Identifier", false);
 		//Final result of assigning to "recur" in the body is returned
 		return recur;
-
 	}
 
 	//Term nonterminal
@@ -815,7 +743,6 @@ public class Syntactic {
 		trace("RelExpression", false);
 		//Final result of assigning to "recur" in the body is returned
 		return result;
-
 	} 
 
 	//relational operation terminal
@@ -853,13 +780,12 @@ public class Syntactic {
 		trace("RelOp", false);
 		//Final result of assigning to "recur" in the body is returned
 		return recur;
-
 	} 
 
 	//Support function to convert relational operators for branch quad construction
 	int relopToOpcode(int relop){
 		int result = -1;
-	
+
 		if (relop == lex.codeFor("EQUAL")) {
 			result = interp.opcodeFor("JNZ");
 		} else if (relop == lex.codeFor("NTEQL")) {
@@ -969,8 +895,6 @@ public class Syntactic {
 		// REMOVED TRACE - mulop call missing from final submission test output
 		//		trace("Mulop", false);
 
-
-
 		//Final result of assigning to "recur" in the body is returned
 		return recur;
 	}
@@ -1019,9 +943,6 @@ public class Syntactic {
 
 	} 
 
-	/**
-	 * *************************************************
-	 */
 	/*     UTILITY FUNCTIONS USED THROUGHOUT THIS CLASS */
 	// error provides a simple way to print an error statement to standard output
 	//     and avoid reduncancy
@@ -1065,25 +986,4 @@ public class Syntactic {
 		return result;
 	}
 	//END OF PROVIDED UTILITY FUNCTIONS
-
-	/*  Template for all the non-terminal method bodies
-   // ALL OF THEM SHOULD LOOK LIKE THE FOLLOWING AT THE ENTRY/EXIT POINTS  
-private int exampleNonTerminal(){
-        int recur = 0;   //Return value used later
-        if (anyErrors) { // Error check for fast exit, error status -1
-            return -1;
-        }
-
-        trace("NameOfThisMethod", true);
-
-// The unique non-terminal stuff goes here, assigning to "recur" based
-//     on recursive calls that were made
-
-		trace("NameOfThisMethod", false);
-// Final result of assigning to "recur" in the body is returned
-        return recur;
-
-}  
-
-	 */    
 }

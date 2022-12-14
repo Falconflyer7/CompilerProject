@@ -67,7 +67,6 @@ public class SymbolTable {
 			undeclaredError(name);
 		}
 		return currentIndex;
-
 	}
 	
 	/**
@@ -100,8 +99,6 @@ public class SymbolTable {
 			undeclaredError(name);
 		}
 		return currentIndex;
-
-
 	}
 
 	/**
@@ -133,7 +130,6 @@ public class SymbolTable {
 			undeclaredError(name);
 		}
 		return currentIndex;
-
 	}
 
 
@@ -331,7 +327,6 @@ public class SymbolTable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}    
-
 	}
 
 	//support method
@@ -465,5 +460,4 @@ public class SymbolTable {
 			return null;
 		}
 	}
-	
 }

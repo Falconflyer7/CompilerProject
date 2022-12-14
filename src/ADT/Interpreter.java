@@ -9,11 +9,9 @@ import java.util.Scanner;
 
 /**
  * Interpreter Class
- * Hard coded initialization for building quad and symbol table objects required
  * Creates interpreter class and allows for running of inputed quad and symbol table structure
  * @author Mark Fish
  * CS 4100 FA22 
- *
  */
 public class Interpreter {
 
@@ -74,7 +72,6 @@ public class Interpreter {
 		qt.AddQuad(4, 1, 3, 1);
 		qt.AddQuad(8, 0, 0, 2);
 		qt.AddQuad(6, 2, 0, 0);
-
 	}
 
 	/**
@@ -207,15 +204,6 @@ public class Interpreter {
 					pc++;
 					break;
 
-					//READ code
-					//				case READ:
-					//					Scanner scanner = new Scanner(System.in);
-					//					temp = Integer.valueOf(scanner.nextLine());
-					//					symbolTable.UpdateSymbol(op3, 'v', temp);
-					//					//Increment program counter after code execution
-					//					pc++;
-					//					break;
-
 				case READ:
 					// Assume parameter/operand must be an integer value
 				{
@@ -301,7 +289,6 @@ public class Interpreter {
 				default:
 					//should never get here but this would be invalid opcode
 					break;
-
 				}
 			}
 		}
@@ -400,8 +387,8 @@ public class Interpreter {
 		return null;
 	}
 
+	//Support method used in code generation for opcode lookup
 	public int opcodeFor(String string) {
 		return this.reserveTable.LookupName(string);
 	}
-
 }

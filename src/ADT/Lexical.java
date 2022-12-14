@@ -1,65 +1,12 @@
 package ADT;
-
-/*
-The following code is provided by the instructor for the completion of PHASE 2 
-of the compiler project for CS4100/5100.
-
-FALL 2022 version
-
-STUDENTS ARE TO PROVIDE THE FOLLOWING CODE FOR THE COMPLETION OF THE ASSIGNMENT:
-
-1) Initialize the 2 reserve tables, which are fields in the Lexical class,
-   named reserveWords and mnemonics.  Create the following functions.
-   These calls are in the lexical constructor:
-       initReserveWords(reserveWords);
-       initMnemonics(mnemonics);
-   One-line examples are provided below
-
-2) getIdentifier, getNumber, getString, and getOtherToken. getOtherToken recognizes
-  one- and two-character tokesn in the language. 
-
-
-
-PROVIDED UTILITY FUNCTIONS THAT STUDENT MAY NEED TO CALL-
-1) YOU MUST NOT USE MAGIC NUMBERS, that is, numeric constants anywhere in the code,
-  like "if tokencode == 50".  Instead, use the following:
-//To get an integer for a given mnemonic, use
-public int codeFor(String mnemonic) {
-       return mnemonics.LookupName(mnemonic);
-   }
-//To get the full reserve word for a given mnemonic, use:
-   public String reserveFor(String mnemonic) {
-       return reserveWords.LookupCode(mnemonics.LookupName(mnemonic));
-   }
-
-Other methods:
-   private void consoleShowError(String message)
-   private boolean isLetter(char ch)
-   private boolean isDigit(char ch)
-   private boolean isStringStart(char ch)
-   private boolean isWhitespace(char ch)
-   public char GetNextChar()
-To check numeric formats of strings to see if they are valid, use:
-
-   public boolean doubleOK(String stin) 
-   public boolean integerOK(String stin)
-
-
-CALLING OTHER FUNCTIONS LIKE getNextLine COULD BREAK THE EXISTING CODE!
-
- */
-
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-
-/**
- *
- * @author abrouill, Mark Fish
- */
 import java.io.*;
 
+/**
+ * Lexical analyzer class
+ * Performs token analysis on input program
+ * @author Mark Fish
+ */
 public class Lexical {
 
 	//Student generated constant identifiers for code quality
@@ -132,18 +79,6 @@ public class Lexical {
 			mnemonic = "";
 		}
 	}
-
-//	//This is the DISCARDABLE dummy method for getting and returning single characters
-//	//STUDENT TURN-IN SHOULD NOT USE THIS!    
-//	private token dummyGet() {
-//		token result = new token();
-//		result.lexeme = "" + currCh; //have the first char
-//		currCh = GetNextChar();
-//		result.code = 0;
-//		result.mnemonic = "DUMY";
-//		return result;
-//
-//	}
 
 	//******************* PUBLIC USEFUL METHODS
 	//These are nice for syntax to call later 
@@ -224,7 +159,6 @@ public class Lexical {
 
 		//reserve undefined character(s)
 		reserveWords.Add(UNDEFINED, 99);
-
 	}
 
 	/**
@@ -339,7 +273,6 @@ public class Lexical {
 	}
 
 	// Called by GetNextChar when the characters in the current line are used up.
-	// STUDENT CODE SHOULD NOT EVER CALL THIS!
 	private void GetNextLine() {
 		try {
 			line = bufferedreader.readLine();
@@ -409,10 +342,7 @@ public class Lexical {
 			if ((curr == commentStart_2) && (PeekNextChar() == commentPairChar)) {
 				curr = GetNextChar(); // get the second
 				curr = GetNextChar(); // into comment or end of comment
-				//           while ((curr != commentPairChar) && (PeekNextChar() != commentEnd_2) &&(!EOF)) {
 				while ((!((curr == commentPairChar) && (PeekNextChar() == commentEnd_2))) && (!EOF)) {
-					//               if (lineCount >=4) {
-					//              System.out.println("In Comment, curr, peek: "+curr+", "+PeekNextChar());}
 					curr = GetNextChar();
 				}
 				if (EOF) {
