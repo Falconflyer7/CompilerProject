@@ -203,9 +203,6 @@ public class Interpreter {
 					 } else {
 						 System.out.println(name);
 				}
-					 
-//					System.out.println(symbolTable.GetSymbol(op3) + " = " + symbolTable.GetInteger(op3));
-//					System.out.println(symbolTable.GetSymbol(op3) + " = " + symbolTable.GetInteger(op3));
 					//Increment program counter after code execution
 					pc++;
 					break;

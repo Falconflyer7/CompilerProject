@@ -8,3 +8,5 @@ Index Name                       Use Typ Value
   6  |  n                       |v  |I  |0
   7  |count                     |v  |I  |0
   8  |@@temp                    |v  |I  |0
+  9  | @0                       |v  |I  |0
+ 10  | @1                       |v  |I  |0

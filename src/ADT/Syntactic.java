@@ -321,20 +321,19 @@ public class Syntactic {
 
 		trace("handleDoWhile", true);
 
-
 		//Call for token after dowhile
 		token = lex.GetNextToken();
 
 		saveTop = quads.NextQuad();
 
 		branchQuad = RelExpression();
-		if (token.code == lex.codeFor("DO___")) {
-			token = lex.GetNextToken();
+//		if (token.code == lex.codeFor("DO___")) {
+//			token = lex.GetNextToken();
 			recur = Statement();
 			quads.AddQuad(interp.opcodeFor("JMP"), 0, 0, saveTop);
 			quads.UpdateJump(branchQuad, quads.NextQuad());
 
-		}
+//		}
 
 
 		trace("handleDoWhile", false);
