@@ -25,7 +25,7 @@ public class Syntactic {
 	private final int quadSize = 1000;
 	private int Minus1Index;
 	private int Plus1Index;
-	
+
 	private int tempVarCount = 0;
 
 	/**
@@ -278,12 +278,12 @@ public class Syntactic {
 		trace("handleIf", true);
 
 		token = lex.GetNextToken();
-		
+
 		branchQuad = RelExpression();
 
 		if (token.code == lex.codeFor("THEN_")) {
 			token = lex.GetNextToken();
-			
+
 			recur = Statement();
 			if (token.code == lex.codeFor("ELSE_")) {
 				token = lex.GetNextToken();
@@ -291,18 +291,18 @@ public class Syntactic {
 				//TODO verify jump instruction "branchop"
 				quads.AddQuad(interp.opcodeFor("JMP"), 0, 0, 0);
 				quads.UpdateJump(branchQuad, quads.NextQuad());
-				
+
 				recur = Statement();
-				
+
 				quads.UpdateJump(patchElse, quads.NextQuad());
 			} else {
 				quads.UpdateJump(branchQuad, quads.NextQuad());
 			}
-			
+
 		} else if (!anyErrors){
 			error("THEN_", token.lexeme);
 		}
-		
+
 		trace("handleIf", false);
 		//Final result of assigning to "recur" in the body is returned
 		return recur;
@@ -321,21 +321,21 @@ public class Syntactic {
 
 		trace("handleDoWhile", true);
 
-		
+
 		//Call for token after dowhile
 		token = lex.GetNextToken();
 
 		saveTop = quads.NextQuad();
-		
+
 		branchQuad = RelExpression();
 		if (token.code == lex.codeFor("DO___")) {
 			token = lex.GetNextToken();
 			recur = Statement();
 			quads.AddQuad(interp.opcodeFor("JMP"), 0, 0, saveTop);
 			quads.UpdateJump(branchQuad, quads.NextQuad());
-			
+
 		}
-		
+
 
 		trace("handleDoWhile", false);
 		//Final result of assigning to "recur" in the body is returned
@@ -413,7 +413,50 @@ public class Syntactic {
 		return recur;
 
 	} 
-
+	
+//	private int handleWriteline(){
+//		int recur = 0;   //Return value used later
+//		int toprint = 0;
+//		if (anyErrors) { //Error check for fast exit, error status -1
+//			return -1;
+//		}
+//
+//		trace("handleWriteline", true);
+//
+//		token = lex.GetNextToken();
+//
+//		if (token.code == lex.codeFor("LPRNT")) {
+//			token = lex.GetNextToken();
+//		} else {
+//			error("(", token.lexeme);
+//		}
+//
+//		if (token.code == lex.codeFor("IDENT")) {
+//			toprint = symbolList.LookupSymbol(token.lexeme);
+//			recur = Identifier();
+//		} else if (token.code == lex.codeFor("SCNST")){
+//			toprint = symbolList.LookupSymbol(token.lexeme);
+//			recur = StringConstant();
+//		} else if (token.code == lex.codeFor("ADD__") || token.code == lex.codeFor("SUBTR") || token.code == lex.codeFor("LPRNT") 
+//				|| token.code == lex.codeFor("ICNST") || token.code == lex.codeFor("FCNST") || token.code == lex.codeFor("IDENT")) {
+//			toprint = SimpleExpression();
+//			recur = SimpleExpression();
+//		} else if (!anyErrors){
+//			error("", token.lexeme);
+//		}
+//		quads.AddQuad(interp.opcodeFor("PRINT"), toprint, 0, 0);
+//		if (token.code == lex.codeFor("RPRNT")) {
+//			token = lex.GetNextToken();
+//		} else if (!anyErrors){
+//			error(")", token.lexeme);
+//		}
+//
+//		trace("handleWriteline", false);
+//		//Final result of assigning to "recur" in the body is returned
+//		return recur;
+//
+//	}
+	
 	//Not a NT, but used to shorten Statement code body for readability.
 	//$WRITELN $LPAR (<simple expression> | <identifier> |<stringconst> ) $RPAR
 	private int handleWriteline(){
@@ -429,8 +472,8 @@ public class Syntactic {
 
 		if (token.code == lex.codeFor("LPRNT")) {
 			token = lex.GetNextToken();
-			
-			if (token.code == lex.codeFor("IDENT") || token.code == lex.codeFor("SCNST")) {
+/// || token.code == lex.codeFor("IDENT")
+			if (token.code == lex.codeFor("SCNST")) {
 				toprint = symbolList.LookupSymbol(token.lexeme);
 				token = lex.GetNextToken();
 			} else {
@@ -445,9 +488,6 @@ public class Syntactic {
 		} else {
 			error("(", token.lexeme);
 		}
-
-		
-
 		trace("handleWriteline", false);
 		//Final result of assigning to "recur" in the body is returned
 		return recur;
@@ -458,6 +498,7 @@ public class Syntactic {
 	//$READLN $LPAR <identifier> $RPAR
 	private int handleReadline(){
 		int recur = 0;   //Return value used later
+		int readLocation = 0;
 		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
@@ -471,8 +512,11 @@ public class Syntactic {
 		} else if (!anyErrors){
 			error("LPRNT", token.lexeme);
 		}
-
+		
+		readLocation = symbolList.LookupSymbol(token.lexeme);
+		quads.AddQuad(interp.opcodeFor("READ"), 0, 0, readLocation);
 		recur = Identifier();
+		
 
 		if (token.code == lex.codeFor("RPRNT")) {
 			token = lex.GetNextToken();
@@ -522,7 +566,7 @@ public class Syntactic {
 
 
 
-//			recur = Addop();
+			//			recur = Addop();
 			token = lex.GetNextToken();
 
 			right = Term();
@@ -625,19 +669,19 @@ public class Syntactic {
 		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
-	
+
 		trace("Identifier", true);
-	
+
 		if (token.code == lex.codeFor("IDENT")) {
 			token = lex.GetNextToken();
-//			recur = symbolList.LookupSymbol(token.lexeme);
-	
+			//			recur = symbolList.LookupSymbol(token.lexeme);
+
 		}
-	
+
 		trace("Identifier", false);
 		//Final result of assigning to "recur" in the body is returned
 		return recur;
-	
+
 	}
 
 	//Term nonterminal
@@ -648,7 +692,7 @@ public class Syntactic {
 		int right = 0;
 		int temp = 0;
 		int opcode = 0;
-		
+
 		if (anyErrors) { // Error check for fast exit, error status -1
 			return -1;
 		}
@@ -881,8 +925,8 @@ public class Syntactic {
 		if (anyErrors) { //Error check for fast exit, error status -1
 			return -1;
 		}
-
-		trace("Mulop", true);
+		// REMOVED TRACE - mulop call missing from final submission test output
+		//		trace("Mulop", true);
 
 		//Iterate token if mulop found
 		if (token.code == lex.codeFor("MULTI")) {
@@ -894,8 +938,11 @@ public class Syntactic {
 		} else {
 			error("Mulop", token.lexeme);
 		}
+		// REMOVED TRACE - mulop call missing from final submission test output
+		//		trace("Mulop", false);
 
-		trace("Mulop", false);
+
+
 		//Final result of assigning to "recur" in the body is returned
 		return recur;
 	}
@@ -943,11 +990,11 @@ public class Syntactic {
 		return recur;
 
 	} 
-	
+
 	//Support function to convert relational operators for branch quad construction
 	int relopToOpcode(int relop){
 		int result = 0;
-		
+
 		if (relop == lex.codeFor("EQUAL")) {
 			result = interp.opcodeFor("BNZ");
 		} else if (relop == lex.codeFor("NTEQL")) {
@@ -961,7 +1008,7 @@ public class Syntactic {
 		} else if (relop == lex.codeFor("GRTEQ")) {
 			result = interp.opcodeFor("BN");
 		}
-		 return result;	
+		return result;	
 	}
 
 	/**

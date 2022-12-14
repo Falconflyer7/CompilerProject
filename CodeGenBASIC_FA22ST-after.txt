@@ -4,7 +4,7 @@ Index Name                            Use Typ Value
   2  |CodegenBASIC                   |P  |I  |0
   3  |BASIC TEST File FA22           |c  |S  |BASIC TEST File FA22
   4  |String printout:  Hello World  |c  |S  |String printout:  Hello World
-  5  |  a                            |v  |I  |16
+  5  |  a                            |i  |I  |25
   6  |  2                            |c  |I  |2
   7  |  b                            |v  |I  |3
   8  |  3                            |c  |I  |3
