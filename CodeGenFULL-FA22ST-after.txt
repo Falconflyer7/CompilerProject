@@ -1,12 +1,23 @@
-Index Name                       Use Typ Value
-  0  | -1                       |c  |I  |-1
-  1  |  1                       |c  |I  |1
-  2  |Codegen                   |P  |I  |0
-  3  |Full FALL22 Test File     |c  |S  |Full FALL22 Test File
-  4  |factorial                 |v  |I  |0
-  5  |Enter the value 5 for n:  |c  |S  |Enter the value 5 for n:
-  6  |  n                       |v  |I  |0
-  7  |count                     |v  |I  |0
-  8  |@@temp                    |v  |I  |0
-  9  | @0                       |v  |I  |0
- 10  | @1                       |v  |I  |0
+Index Name                                   Use Typ Value
+  0  | -1                                   |c  |I  |-1
+  1  |  1                                   |c  |I  |1
+  2  |Codegen                               |P  |I  |0
+  3  |Full FALL22 Test File                 |c  |S  |Full FALL22 Test File
+  4  |factorial                             |v  |I  |120
+  5  |Enter the value 5 for n:              |c  |S  |Enter the value 5 for n:
+  6  |  n                                   |i  |I  |5
+  7  |count                                 |v  |I  |1
+  8  |@@0                                   |v  |I  |1
+  9  | @0                                   |v  |I  |120
+ 10  | @1                                   |v  |I  |6
+ 11  |The calculation of 5! is:             |c  |S  |The calculation of 5! is:
+ 12  |                                      |c  |S  | 
+ 13  |@@1                                   |v  |I  |0
+ 14  |  2                                   |c  |I  |2
+ 15  | @2                                   |v  |I  |0
+ 16  |@@2                                   |v  |I  |-2
+ 17  |Count - 2 is greater than 2           |c  |S  |Count - 2 is greater than 2
+ 18  |Count - 2 is less than or equal to 2  |c  |S  |Count - 2 is less than or equal to 2
+ 19  | @3                                   |v  |I  |1
+ 20  |Count is:                             |c  |S  |Count is: 
+ 21  |All done.                             |c  |S  |All done.

@@ -7,15 +7,17 @@ Index Name                                   Use Typ Value
   5  |Enter the value 5 for n:              |c  |S  |Enter the value 5 for n:
   6  |  n                                   |v  |I  |0
   7  |count                                 |v  |I  |0
-  8  |@@temp                                |v  |I  |0
+  8  |@@0                                   |v  |I  |0
   9  | @0                                   |v  |I  |0
  10  | @1                                   |v  |I  |0
  11  |The calculation of 5! is:             |c  |S  |The calculation of 5! is:
  12  |                                      |c  |S  | 
- 13  |  2                                   |c  |I  |2
- 14  | @2                                   |v  |I  |0
- 15  |Count - 2 is greater than 2           |c  |S  |Count - 2 is greater than 2
- 16  |Count - 2 is less than or equal to 2  |c  |S  |Count - 2 is less than or equal to 2
- 17  | @3                                   |v  |I  |0
- 18  |Count is:                             |c  |S  |Count is: 
- 19  |All done.                             |c  |S  |All done.
+ 13  |@@1                                   |v  |I  |0
+ 14  |  2                                   |c  |I  |2
+ 15  | @2                                   |v  |I  |0
+ 16  |@@2                                   |v  |I  |0
+ 17  |Count - 2 is greater than 2           |c  |S  |Count - 2 is greater than 2
+ 18  |Count - 2 is less than or equal to 2  |c  |S  |Count - 2 is less than or equal to 2
+ 19  | @3                                   |v  |I  |0
+ 20  |Count is:                             |c  |S  |Count is: 
+ 21  |All done.                             |c  |S  |All done.

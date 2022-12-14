@@ -27,6 +27,7 @@ public class Syntactic {
 	private int Plus1Index;
 
 	private int tempVarCount = 0;
+	private int tempRelExpCount = 0;
 
 	/**
 	 * Class constructor
@@ -327,11 +328,19 @@ public class Syntactic {
 		saveTop = quads.NextQuad();
 
 		branchQuad = RelExpression();
+		
+		
+		
 //		if (token.code == lex.codeFor("DO___")) {
 //			token = lex.GetNextToken();
 			recur = Statement();
-			quads.AddQuad(interp.opcodeFor("JMP"), 0, 0, saveTop);
-			quads.UpdateJump(branchQuad, quads.NextQuad());
+			
+//			if (token.code == lex.codeFor("END___")){
+				quads.AddQuad(interp.opcodeFor("JMP"), 0, 0, saveTop);
+				quads.UpdateJump(branchQuad, quads.NextQuad());
+//				token = lex.GetNextToken();
+//			}
+			
 
 //		}
 
@@ -798,11 +807,11 @@ public class Syntactic {
 		left = SimpleExpression();
 		saveRelop = RelOp();
 		right = SimpleExpression();
-		temp = symbolList.AddSymbol("@@temp", 'v', 0);
-		quads.AddQuad(interp.opcodeFor("SUB"), left, right, saveRelop);
+		temp = symbolList.AddSymbol("@@"+tempRelExpCount, SymbolTable.VARIABLE_KIND, 0);
+		quads.AddQuad(interp.opcodeFor("SUB"), left, right, temp);
 		result = quads.NextQuad();
 		quads.AddQuad(relopToOpcode(saveRelop), temp, 0, 0);
-
+		tempRelExpCount++;
 		trace("RelExpression", false);
 		//Final result of assigning to "recur" in the body is returned
 		return result;
@@ -846,6 +855,26 @@ public class Syntactic {
 		return recur;
 
 	} 
+
+	//Support function to convert relational operators for branch quad construction
+	int relopToOpcode(int relop){
+		int result = -1;
+	
+		if (relop == lex.codeFor("EQUAL")) {
+			result = interp.opcodeFor("JNZ");
+		} else if (relop == lex.codeFor("NTEQL")) {
+			result = interp.opcodeFor("JZ");
+		} else if (relop == lex.codeFor("LSTHN")) {
+			result = interp.opcodeFor("JNN");
+		} else if (relop == lex.codeFor("GRTHN")) {
+			result = interp.opcodeFor("JNP");
+		} else if (relop == lex.codeFor("LSTEQ")) {
+			result = interp.opcodeFor("JP");
+		} else if (relop == lex.codeFor("GRTEQ")) {
+			result = interp.opcodeFor("JN");
+		}
+		return result;	
+	}
 
 	//Unsigned Constant nonterminal
 	//<unsigned constant>-> <unsigned number>
@@ -989,26 +1018,6 @@ public class Syntactic {
 		return recur;
 
 	} 
-
-	//Support function to convert relational operators for branch quad construction
-	int relopToOpcode(int relop){
-		int result = 0;
-
-		if (relop == lex.codeFor("EQUAL")) {
-			result = interp.opcodeFor("BNZ");
-		} else if (relop == lex.codeFor("NTEQL")) {
-			result = interp.opcodeFor("BZ");
-		} else if (relop == lex.codeFor("LSTHN")) {
-			result = interp.opcodeFor("BNN");
-		} else if (relop == lex.codeFor("GRTHN")) {
-			result = interp.opcodeFor("BNP");
-		} else if (relop == lex.codeFor("LSTEQ")) {
-			result = interp.opcodeFor("BP");
-		} else if (relop == lex.codeFor("GRTEQ")) {
-			result = interp.opcodeFor("BN");
-		}
-		return result;	
-	}
 
 	/**
 	 * *************************************************
