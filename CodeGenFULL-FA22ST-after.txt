@@ -1,0 +1,10 @@
+Index Name                       Use Typ Value
+  0  | -1                       |c  |I  |-1
+  1  |  1                       |c  |I  |1
+  2  |Codegen                   |P  |I  |0
+  3  |Full FALL22 Test File     |c  |S  |Full FALL22 Test File
+  4  |factorial                 |v  |I  |0
+  5  |Enter the value 5 for n:  |c  |S  |Enter the value 5 for n:
+  6  |  n                       |v  |I  |0
+  7  |count                     |v  |I  |0
+  8  |@@temp                    |v  |I  |0

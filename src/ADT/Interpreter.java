@@ -195,7 +195,17 @@ public class Interpreter {
 
 					//PRINT code
 				case PRINT:
-					System.out.println(symbolTable.GetSymbol(op3) + " = " + symbolTable.GetInteger(op3));
+					 String name = symbolTable.GetSymbol(op3);
+					 int value = symbolTable.GetInteger(op3);
+					 
+					 if (value != 0) {
+						 System.out.println(value);
+					 } else {
+						 System.out.println(name);
+				}
+					 
+//					System.out.println(symbolTable.GetSymbol(op3) + " = " + symbolTable.GetInteger(op3));
+//					System.out.println(symbolTable.GetSymbol(op3) + " = " + symbolTable.GetInteger(op3));
 					//Increment program counter after code execution
 					pc++;
 					break;
