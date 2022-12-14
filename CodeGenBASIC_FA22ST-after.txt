@@ -4,15 +4,18 @@ Index Name                            Use Typ Value
   2  |CodegenBASIC                   |P  |I  |0
   3  |BASIC TEST File FA22           |c  |S  |BASIC TEST File FA22
   4  |String printout:  Hello World  |c  |S  |String printout:  Hello World
-  5  |  a                            |v  |I  |-2
+  5  |  a                            |v  |I  |16
   6  |  2                            |c  |I  |2
-  7  |  b                            |v  |I  |-1
+  7  |  b                            |v  |I  |3
   8  |  3                            |c  |I  |3
-  9  | @0                            |v  |I  |-2
- 10  | @1                            |v  |I  |-2
- 11  | @2                            |v  |I  |-3
- 12  | @3                            |v  |I  |-2
- 13  |a is now                       |c  |S  |a is now 
- 14  |Input a value of 25 for a:     |c  |S  |Input a value of 25 for a: 
- 15  |After READLN, a is now         |c  |S  |After READLN, a is now 
- 16  |All done.                      |c  |S  |All done.
+  9  | @0                            |v  |I  |6
+ 10  | @1                            |v  |I  |12
+ 11  | @2                            |v  |I  |14
+ 12  | @3                            |v  |I  |6
+ 13  | @4                            |v  |I  |3
+ 14  | @5                            |v  |I  |17
+ 15  | @6                            |v  |I  |16
+ 16  |a is now                       |c  |S  |a is now 
+ 17  |Input a value of 25 for a:     |c  |S  |Input a value of 25 for a: 
+ 18  |After READLN, a is now         |c  |S  |After READLN, a is now 
+ 19  |All done.                      |c  |S  |All done.

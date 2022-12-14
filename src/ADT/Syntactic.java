@@ -526,7 +526,7 @@ public class Syntactic {
 			token = lex.GetNextToken();
 
 			right = Term();
-			temp = symbolList.AddSymbol("@"+tempVarCount, 'v', 0);
+			temp = symbolList.AddSymbol("@"+tempVarCount, SymbolTable.VARIABLE_KIND, 0);
 			quads.AddQuad(opcode, left, right, temp);
 			left = temp;
 			tempVarCount++;
@@ -666,6 +666,7 @@ public class Syntactic {
 			temp = symbolList.AddSymbol("@"+tempVarCount, SymbolTable.VARIABLE_KIND, 0);
 			quads.AddQuad(opcode, left, right, temp);
 			left = temp;
+			tempVarCount++;
 		}
 
 		trace("Term", false);

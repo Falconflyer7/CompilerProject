@@ -12,7 +12,10 @@ Index Name                            Use Typ Value
  10  | @1                            |v  |I  |0
  11  | @2                            |v  |I  |0
  12  | @3                            |v  |I  |0
- 13  |a is now                       |c  |S  |a is now 
- 14  |Input a value of 25 for a:     |c  |S  |Input a value of 25 for a: 
- 15  |After READLN, a is now         |c  |S  |After READLN, a is now 
- 16  |All done.                      |c  |S  |All done.
+ 13  | @4                            |v  |I  |0
+ 14  | @5                            |v  |I  |0
+ 15  | @6                            |v  |I  |0
+ 16  |a is now                       |c  |S  |a is now 
+ 17  |Input a value of 25 for a:     |c  |S  |Input a value of 25 for a: 
+ 18  |After READLN, a is now         |c  |S  |After READLN, a is now 
+ 19  |All done.                      |c  |S  |All done.
